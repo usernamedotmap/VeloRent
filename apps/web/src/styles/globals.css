@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ─── Green default theme ─────────────────────────── */
+    --background:          138 76% 97%;
+    --foreground:          138 76% 5%;
+    --card:                0 0% 100%;
+    --card-foreground:     138 76% 5%;
+    --primary:             142 76% 36%;
+    --primary-foreground:  0 0% 100%;
+    --primary-bold:        142 76% 16%;
+    --secondary:           138 40% 90%;
+    --secondary-foreground: 138 40% 20%;
+    --muted:               138 30% 94%;
+    --muted-foreground:    138 10% 45%;
+    --accent:              142 69% 58%;
+    --accent-foreground:   0 0% 100%;
+    --destructive:         0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border:              138 30% 88%;
+    --input:               138 30% 88%;
+    --ring:                142 76% 36%;
+    --radius:              0.625rem;
+  }
+
+  [data-theme="light"] {
+    --background:          0 0% 100%;
+    --foreground:          222 84% 5%;
+    --card:                0 0% 100%;
+    --card-foreground:     222 84% 5%;
+    --primary:             142 76% 36%;
+    --primary-foreground:  0 0% 100%;
+    --secondary:           210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted:               210 40% 96%;
+    --muted-foreground:    215 16% 47%;
+    --accent:              142 69% 58%;
+    --accent-foreground:   0 0% 100%;
+    --border:              214 32% 91%;
+    --input:               214 32% 91%;
+    --ring:                142 76% 36%;
+  }
+
+  [data-theme="dark"] {
+    --background:          138 20% 8%;
+    --foreground:          138 10% 95%;
+    --card:                138 20% 11%;
+    --card-foreground:     138 10% 95%;
+    --primary:             142 76% 45%;
+    --primary-foreground:  0 0% 100%;
+    --secondary:           138 20% 16%;
+    --secondary-foreground: 138 10% 85%;
+    --muted:               138 20% 14%;
+    --muted-foreground:    138 10% 55%;
+    --accent:              142 69% 50%;
+    --accent-foreground:   0 0% 100%;
+    --border:              138 20% 18%;
+    --input:               138 20% 18%;
+    --ring:                142 76% 45%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+    box-sizing:   border-box;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color:            hsl(var(--foreground));
+    font-family:      'Nunito', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+  }
+}

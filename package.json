@@ -1,0 +1,18 @@
+{
+  "name": "velorent",
+  "private": true,
+  "packageManager": "npm@10.9.4",
+  "workspaces": [
+    "backend",
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build"
+  },
+
+  "devDependencies": {
+    "turbo": "^2.8.14"
+  }
+}

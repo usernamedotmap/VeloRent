@@ -1,0 +1,68 @@
+# --- Dependencies ---
+# Never push these; they are massive and easily reinstalled
+node_modules/
+.pnp
+.pnp.js
+
+# --- Environment Secrets ---
+# CRITICAL: Prevent leaking API keys and passwords
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+auth_config.json
+
+# --- TypeScript & Compilation ---
+# Ignore the compiled output (JavaScript) and TS metadata
+dist/
+build/
+out/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# --- React Specific ---
+# Production build folder and logs
+/build
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Testing ---
+# Coverage reports from Jest or Vitest
+coverage/
+__snapshots__/
+
+# --- OS & IDE Files ---
+# Prevent system-specific files from cluttering the repo
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Logs ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+
+# --- Turborepo Specific ---
+.turbo/
+# If you use a shared cache or local turbo artifacts
+out/
+
+# --- Package Manager Lockfiles ---
+# Usually, you keep your lockfile (package-lock.json, yarn.lock, or pnpm-lock.yaml) 
+# in the root. Do NOT ignore the lockfile, but you can ignore these:
+.npm/
+.yarn/install-state.gz
