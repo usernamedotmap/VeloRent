@@ -41,7 +41,9 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
                 {/* bell hereader */}
                 <div className='flex items-center gap-2'>
-                    <NotificationBell />
+                    <div className="hidden lg:block">
+                        <NotificationBell />
+                    </div>
                     {onClose && (
                         <button onClick={onClose}
                             className="text-white/60 hover:text-white transition-colors lg:hidden">

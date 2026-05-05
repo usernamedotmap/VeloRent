@@ -75,7 +75,11 @@ export default function NotificationBell() {
 
             {/* bell */}
             <button
-                onClick={() => setOpen((p) => !p)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setOpen((p) => !p)
+                }
+                }
                 className="relative p-2 rounded-xl hover:bg-white/10 transition-colors"
                 aria-haspopup="dialog"
                 aria-expanded={open}
@@ -100,18 +104,20 @@ export default function NotificationBell() {
             {/* drowopdown */}
             {open && (
                 <div
-                    ref={panelRef}
+                    onClick={(e) => e.stopPropagation()}
                     role="dialog"
                     aria-modal="true"
                     aria-label="Notifications"
                     className={cn(
                         // mb view
-                        "fixed inset-x-0 top-0 z-50 sm:absolute sm:right-0  sm:top-full sm:mt-2",
-                        "sm:w-96 w-full",
-                        "bg-[hsl(var(--card))] sm:rounded-2xl rounded-b-2xl sm:border sm:border-[hsl(var(--border))] shadow-2xl overflow-hidden",
+                        "fixed inset-x-0 top-0 z-50 w-full",
+                        "lg:absolute lg:top-full lg:mt-2 lg:w-96",
+                        "lg:left-full",
+                        
+                        "bg-[hsl(var(--card))] lg:rounded-2xl rounded-b-2xl lg:border lg:border-[hsl(var(--border))] shadow-2xl overflow-hidden",
                         "transform-gpu animate-in fade-in-0 duration-200"
                     )}
-                    style={{ maxHeight: "80vh" }}>
+                    style={{ maxHeight: "80vh" }}>  
 
                     {/* header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-[hsl(var(--border))]">
