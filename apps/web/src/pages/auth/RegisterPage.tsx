@@ -100,6 +100,7 @@ const RegisterPage = () => {
             autoComplete='email'
             required
             error={errors.email?.message}
+            {...registerField('email')}
           />
 
           {/* phone */}

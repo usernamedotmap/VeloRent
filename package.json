@@ -3,8 +3,7 @@
   "private": true,
   "packageManager": "npm@10.9.4",
   "workspaces": [
-    "backend",
-    "apps/web",
+    "apps/*",
     "packages/*"
   ],
   "scripts": {

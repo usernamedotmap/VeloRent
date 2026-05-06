@@ -1,7 +1,7 @@
 import { ENV } from "../config/env";
 import { resendClient } from "../config/resend";
-import { sendSms } from "../config/semaphore";
-import { Notification } from "../models";
+import { sendSms } from "../config/Infobip";
+import { Notification, NotificationStatus } from "../models";
 import {
   bookingConfirmedTemplate,
   rideCompletedTemplate,
@@ -11,8 +11,8 @@ import {
 const processSMS = async (notification: any): Promise<void> => {
   const result = await sendSms(notification.recipient, notification.message);
 
-  notification.status = "send";
-  notification.providerRef = String(result.message_id);
+  notification.status = "sent";
+  notification.providerRef = String(result.messageId);
   notification.sentAt = new Date();
   await notification.save();
 };
@@ -89,7 +89,7 @@ const processEmail = async (notification: any): Promise<void> => {
   });
 
   notification.status = "sent";
-  notification.providerRef = result.data?.id ?? "send";
+  notification.providerRef = result.data?.id  ;
   notification.sentAt = new Date();
   await notification.save();
 };
@@ -119,7 +119,6 @@ export const processPendingNotifications = async (): Promise<void> => {
 
         await processSMS(notification);
       } else if (notification.channel === "email") {
-        console.log("here emial process");
         await processEmail(notification);
       }
 
