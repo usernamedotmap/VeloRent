@@ -20,6 +20,10 @@ export interface BookingState {
   clientKey: string | null;
   intentId: string | null;
 
+  // pyament state tracking
+  paymentStatus: 'idle' | 'initiated' | 'processing' | 'completed' | 'failed';
+  setPaymentStatus: (status: BookingState['paymentStatus']) => void;
+
   // Navigation
   currentStep: BookingStep;
 
@@ -52,6 +56,10 @@ export const useBookingStore = create<BookingState>((set, get) => ({
   clientKey: null,
   intentId: null,
   currentStep: 1,
+  paymentStatus: 'idle',
+
+
+  setPaymentStatus: (status) => set({ paymentStatus: status }),
 
   addBike: (bike) =>
     set((s) => {
@@ -85,6 +93,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
       intentId: null,
       currentStep: 1,
       isReservationCreated: false,
+      paymentStatus: 'idle',
     }),
 
   totalCost: () => {

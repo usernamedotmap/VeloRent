@@ -7,11 +7,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
-  "description": "",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "zod": "^3.22.4"
-  }
+ "peerDependencies": {
+  "zod": "3.25.76"
+},
+"devDependencies": {
+  "zod": "3.25.76"
+}
 }

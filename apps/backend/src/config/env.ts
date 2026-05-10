@@ -26,9 +26,7 @@ export const ENV = {
   RESEND_FROM_NAME: process.env.RESEND_FROM_NAME || "VeloRent",
   RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
 
-  INFORBIP_BASE_URL: required("INFOBIP_BASE_URL"),
-  INFOBIP_API_KEY: required("INFOBIP_API_KEY"),
-  INFOBIP_SENDER_NAME: process.env.INFOBIP_SENDER_NAME || "3JREMY",
+  IPROGSMS_API_KEY: required("IPROGSMS_API_KEY"),
 
   JWT_ACCESS_SECRET: required("JWT_ACCESS_SECRET"),
   JWT_REFRESH_SECRET: required("JWT_REFRESH_SECRET"),

@@ -1,7 +1,7 @@
 import { ENV } from "../config/env";
 import { resendClient } from "../config/resend";
-import { sendSms } from "../config/Infobip";
-import { Notification, NotificationStatus } from "../models";
+import { sendSms } from "../config/Iprogsms";
+import { Notification } from "../models";
 import {
   bookingConfirmedTemplate,
   rideCompletedTemplate,
@@ -12,7 +12,7 @@ const processSMS = async (notification: any): Promise<void> => {
   const result = await sendSms(notification.recipient, notification.message);
 
   notification.status = "sent";
-  notification.providerRef = String(result.messageId);
+  notification.providerRef = String(result.message_id);
   notification.sentAt = new Date();
   await notification.save();
 };

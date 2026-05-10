@@ -13,7 +13,7 @@ import { formatPeso } from "@/lib/utils";
 import { useBookingStore } from "@/stores/booking.store";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 
 
@@ -34,12 +34,36 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
     const totalCost = useBookingStore((s) => s.totalCost());
     const selectedBikes = useBookingStore((s) => s.selectedBikes);
     const slotHours = useBookingStore((s) => s.slotHours);
+    const paymentStatus = useBookingStore((s) => s.paymentStatus);
+    const setPaymentStatus = useBookingStore((s) => s.setPaymentStatus);
     const reset = useBookingStore((s) => s.reset);
 
     const { mutate: cancelReservation } = useCancelReservation(reservationId ?? '');
 
-    const handleCancelAndGoBack = () => {
 
+    useEffect(() => {
+        if (paymentStatus !== 'initiated') return;
+
+        const handleFocus = () => {
+            // user RETURN this tab after
+
+            if (paymentStatus === 'initiated') {
+                setShowModal(true);
+                setPaymentStatus('processing');
+            }
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [paymentStatus]);
+
+    const handleOpenPayment = () => {
+        setPaymentStatus('initiated');
+        setShowModal(true);
+    };
+
+    const isPaymentLocked = ['initiated', 'processing', 'completed'].includes(paymentStatus);
+    const handleCancelAndGoBack = () => {
         if (!reservationId) {
             reset();
             navigate(ROUTES.BIKES);
@@ -148,19 +172,22 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                 </div>
 
                 {/* navigation */}
-                <div className="flex gap-3 pt-2 border-t border-[hsl(var(--border))]">
-                    <Button variant="outline"
-                        onClick={() => setShowCancelConfirm(true)}
-                        disabled={isCancelling}
-                    >
+                <div className="flex gap-3 pt-2 border border-[hsl(var(--border))]">
+                    <Button variant="outline" onClick={() => setShowCancelConfirm(true)}>
                         ← Cancel
                     </Button>
                     <Button
                         fullWidth
                         size="lg"
-                        disabled={!clientKey || !reservationId}
-                        onClick={() => setShowModal(true)}>
-                        💳 Pay {formatPeso(totalCost)}
+                        disabled={!clientKey || !reservationId || isPaymentLocked}
+                        onClick={handleOpenPayment}
+                    >
+                        {paymentStatus === 'initiated'
+                            ? '⏳ Payment in progress...'
+                            : paymentStatus === 'processing'
+                                ? '🔄 Checking payment...'
+                                : `💳 Pay ${formatPeso(totalCost)}`
+                        }
                     </Button>
                 </div>
             </div>
@@ -201,13 +228,46 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                 </div>
             )}
 
+            {/* show status banner */}
+            {paymentStatus === 'initiated' && !showModal && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+                    <span className="text-xl">⏳</span>
+                    <div className="flex-1">
+                        <p className="font-bold text-sm text-amber-700">
+                            Payment in progress
+                        </p>
+                        <p className="text-xs text-amber-600">
+                            Complete your payment in the other tab, or click below to check status.
+                        </p>
+                    </div>
+                    <Button
+                        size="sm"
+                        onClick={() => {
+                            setShowModal(true);
+                            setPaymentStatus('processing')
+                        }}>
+                        Check Status
+                    </Button>
+                </div>
+            )}
+
+
+
+
             {showModal && clientKey && reservationId && (
                 <PaymentModal
                     clientKey={clientKey}
                     amount={totalCost}
                     reservationId={reservationId}
                     onClose={() => setShowModal(false)}
-                    onSuccess={handleSuccess}
+                    onSuccess={() => {
+                        setPaymentStatus('completed');
+                        handleSuccess();
+                    }}
+                    onFailed={() => {
+                        setPaymentStatus('failed');
+                        setShowModal(false);
+                    }}
                 />
             )}
         </>

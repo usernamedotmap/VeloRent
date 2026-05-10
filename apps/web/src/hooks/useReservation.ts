@@ -63,7 +63,7 @@ export const useCreateReservation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: unknown) => {
-      const { data } = await api.post("/reservation/create/online", input);
+      const { data } = await api.post<{ success: boolean; data: Reservation }>("/reservation/create/online", input);
       return data.data;
     },
     onSuccess: () =>
@@ -78,7 +78,7 @@ export const useCreateWalkIn = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: unknown) => {
-      const { data } = await api.post("/reservation/create/walk-in", input);
+      const { data } = await api.post<{ success: boolean; data: Reservation }>("/reservation/create/walk-in", input);
       return data.data;
     },
     onSuccess: () =>
@@ -93,12 +93,12 @@ export const useCancelReservation = (id: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (reason: string) => {
-      const { data } = await api.patch(`/reservation/${id}/cancel`, {
+      const { data } = await api.patch<{ success: boolean; data: Reservation }>(`/reservation/${id}/cancel`, {
         cancellationReason: reason,
       });
       return data.data;
     },
-    onSuccess: (id) => {
+    onSuccess: (data, reason) => {
       queryClient.invalidateQueries({
         queryKey: ["reservations"],
       });
@@ -117,7 +117,7 @@ export const useStartItem = (reservationId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (itemId: string) => {
-      const { data } = await api.patch(
+      const { data } = await api.patch<{ success: boolean; data: Reservation }>(
         `/reservation/${reservationId}/start-item`,
         {
           itemId,
@@ -136,8 +136,8 @@ export const useStartItem = (reservationId: string) => {
 export const useCompleteItem = (reservationId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (itemId) => {
-      const { data } = await api.patch(
+    mutationFn: async (itemId: string) => {
+      const { data } = await api.patch<{ success: boolean; data: Reservation }>(
         `/reservation/${reservationId}/complete-item`,
         { itemId },
       );

@@ -24,7 +24,7 @@ const LoadingSpinner = ({ size = 'md', className, fullPage }: Props) => {
 
     if (fullPage) {
         return (
-            <div className='fixed inset-0 flex items-center justify-center bg-[hsl(var(--background/0.8))] z-50'>
+            <div className='fixed inset-0 flex items-center justify-center bg-[hsl(var(--background)/0.8)] z-50'>
                 {spinner}
             </div>
         )

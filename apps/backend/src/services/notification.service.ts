@@ -13,10 +13,15 @@ export const queueBookingConfirmedNotification = async (
   const bikes = reservation.items.length;
   const cost = (reservation.totalCost / 100).toFixed(2);
 
-  const smsMessage =
-    `Hi ${user.firstName}! VeloRent booking confirmed. ` +
+  const smsMessage = `Ref: ${String(reservation._id).slice(-6).toUpperCase()} | Date: ${date}`;
+  // `Hi ${user.firstName}! 3Jremy booking confirmed. ` +
+  // `${bikes} bike${bikes > 1 ? "s" : ""} | ${reservation.slotHours}hr | ` +
+  // `${date} | P${cost}. Show this at counter. Enjoy!`;
+
+  const emailMessage =
+    `Hi ${user.firstName}! 3Jremy booking confirmed. ` +
     `${bikes} bike${bikes > 1 ? "s" : ""} | ${reservation.slotHours}hr | ` +
-    `${date} | ₱${cost}. Show this at counter. Enjoy!`;
+    `${date} | P${cost}. Show this at counter. Enjoy!`;
 
   // Queue SMS
   await Notification.create({
@@ -36,17 +41,17 @@ export const queueBookingConfirmedNotification = async (
     channel: "email",
     event: "booking_confirmed",
     recipient: user.email,
-    message: smsMessage,
+    message: emailMessage,
     status: "pending",
   });
 
   await createDashboardNotifcation({
-    recipientRole: 'both',
-    event: 'payment_confirmed',
-    title: '✅ Payment Confirmed',
+    recipientRole: "both",
+    event: "payment_confirmed",
+    title: "✅ Payment Confirmed",
     message: `Reservation ${String(reservation._id)?.slice(-6).toUpperCase()} ready for pickup`,
     reservationId: String(reservation._id),
-  })
+  });
 };
 
 // -- ride completed ---
@@ -61,12 +66,12 @@ export const queueRideCompletedNotification = async (
 
   const cost = (reservation.totalCost / 100).toFixed(2);
 
-  const smsMessage =
-    `Hi ${user.firstName}! VeloRent ride complete. ` +
-    `Total: ₱${cost}` +
-    (totalOverdue > 0
-      ? ` (incl. ₱${(totalOverdue / 100).toFixed(2)} overdue charge — settle at counter).`
-      : `. Thanks for riding with us!`);
+  const smsMessage = "";
+  // `Hi ${user.firstName}! 3Jremy ride complete. ` +
+  // `Total: P${cost}` +
+  // (totalOverdue > 0
+  //   ? ` (incl. P${(totalOverdue / 100).toFixed(2)} overdue charge — settle at counter).`
+  //   : `. Thanks for riding with us!`);
 
   // Queye SMS
   await Notification.create({

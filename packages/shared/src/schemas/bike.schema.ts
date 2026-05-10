@@ -1,4 +1,4 @@
-import z from "zod";
+import {z} from "zod";
 
 export const BikeCategories = ["solo", "kid", "family"] as const;
 export const BikeStyles = ["standard", "mountain", "bmx"] as const;
@@ -18,7 +18,7 @@ export const CreateBikeSchema = z.object({
   style: z.enum(BikeStyles, {
     errorMap: () => ({ message: "Invalid bike style" }),
   }),
-  imageUrls: z.array(z.string()).optional().default([]),
+  imageUrls: z.array(z.string().url()).default([]),
 });
 
 export type CreateBikeInput = z.infer<typeof CreateBikeSchema>;

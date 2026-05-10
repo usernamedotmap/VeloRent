@@ -16,7 +16,6 @@ interface Props {
     onSuccess: () => void;
 }
 
-
 export default function BikeFormModal({ bike, onClose, onSuccess }: Props) {
     const isEdit = !!bike;
 

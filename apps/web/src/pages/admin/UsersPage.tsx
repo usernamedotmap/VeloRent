@@ -30,7 +30,7 @@ const AdminUsersPage = () => {
 
             <div className="bg-[hsl(var(--card))] rounded-2xl border border-[hsl(var(--border))] overflow-hidden">
                 <ResponsiveTable
-                    keyField="_id"
+                    keyField="id"
                     isLoading={isLoading}
                     data={users}
                     emptyText="No users found"

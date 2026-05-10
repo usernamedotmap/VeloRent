@@ -78,20 +78,23 @@ class SessionBroadcaster {
     if (!this.channel) return;
 
     this.channel.onmessage = (event) => {
-      const message = event.data as SessionMessage;
+      try {
+  const message = event.data as SessionMessage;
       this.handleMessage(message);
+      } catch (error) {
+        console.error('[SessionBroadcaster] Error handling incoming message:', error);
+      }
+    
     };
 
-    this.channel.onerror = (error) => {
-      console.error('[SessionBroadcaster] Channel error:', error);
-    };
+  
   }
 
   /**
    * Handle incoming message from other tabs
    */
   private handleMessage(message: SessionMessage): void {
-    const { type, data, timestamp } = message;
+    const { type, data } = message;
     
     console.log(`[SessionBroadcaster] Received: ${type}`, data);
 

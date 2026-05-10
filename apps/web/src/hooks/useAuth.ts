@@ -75,7 +75,7 @@ export const useRegister = () => {
 
   return useMutation({
     mutationFn: async (input: RegisterInput) => {
-      const { data } = await api.post("/auth/register", input);
+      const { data } = await api.post<{ success: boolean; data: User }>("/auth/register", input);
       return data.data;
     },
     onSuccess: () => navigate(ROUTES.REGISTER),
@@ -89,7 +89,10 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => api.post("/auth/logout"),
+    mutationFn: async () => {
+      const { data } = await api.post<{ success: boolean }>("/auth/logout");
+      return data;
+    },
     onSuccess: () => {
       logout();
       queryClient.clear();

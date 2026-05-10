@@ -49,7 +49,7 @@ export const useCreateBike = () => {
 
   return useMutation({
     mutationFn: async (input: unknown) => {
-      const { data } = await api.post("/bike/create", input);
+      const { data } = await api.post<{ success: boolean; data: Bike }>("/bike/create", input);
       return data.data;
     },
     onSuccess: () =>
@@ -65,7 +65,7 @@ export const useUpdateBike = (id: string) => {
 
   return useMutation({
     mutationFn: async (input: unknown) => {
-      const { data } = await api.patch(`/bike/${id}/update`, input);
+      const { data } = await api.patch<{ success: boolean; data: Bike }>(`/bike/${id}/update`, input);
       return data.data;
     },
     onSuccess: () => {
@@ -85,7 +85,7 @@ export const useUPdateBikeStatus = (id: string) => {
 
   return useMutation({
     mutationFn: async (input: { status: string; note?: string }) => {
-      const { data } = await api.patch(`/bike/${id}/status`, input);
+      const { data } = await api.patch<{ success: boolean; data: Bike }>(`/bike/${id}/status`, input);
       return data.data;
     },
     onSuccess: () =>
@@ -100,7 +100,7 @@ export const useRetireBike = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await api.delete(`/bike/${id}/delete`);
+      const { data } = await api.delete<{ success: boolean; data: Bike }>(`/bike/${id}/delete`);
       return data.data;
     },
     onSuccess: () =>

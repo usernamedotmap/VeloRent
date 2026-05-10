@@ -4,13 +4,14 @@
 
 import BikeStatusModal from '@/components/admin/BikeStatusModal';
 import BikeFormModal from '@/components/bike/BikeFormModal';
+import BikeQrCode from '@/components/bike/BikeQrCode';
 import PageHeader from '@/components/common/PageHeader';
 import Pagination from '@/components/common/Pagination';
 import ResponsiveTable from '@/components/common/ResponsiveTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useBikes } from '@/hooks/useBike';
-import {  formatPeso } from '@/lib/utils';
+import { formatPeso } from '@/lib/utils';
 import { Bike, BikeFilters } from '@/types/bike.types';
 import React, { useState } from 'react'
 
@@ -34,6 +35,7 @@ const statusStyles: Record<string, string> = {
 }
 
 const AdminBikesPage = () => {
+    const [qrBike, setQrBike] = useState<Bike | null>(null);
     const [filters, setFilters] = useState<BikeFilters>({ page: 1, limit: 10 });
     const [showCreate, setShowCreate] = useState(false);
     const [editBike, setEditBike] = useState<Bike | null>(null);
@@ -119,6 +121,12 @@ const AdminBikesPage = () => {
                                             Maintenance
                                         </Button>
                                     )}
+                                    <Button
+                                    size='sm'
+                                    variant='ghost'
+                                    onClick={() => setQrBike(b)}>
+                                        QR Code
+                                    </Button>
                                 </div>
                             )
                         }
@@ -141,6 +149,39 @@ const AdminBikesPage = () => {
             )}
 
             {/* modals */}
+
+            {qrBike && (
+                <div className='fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4'>
+                    <div className='bg-[hsl(var(--card))] rounded-3xl border border-[hsl(var(--border))] shadow-2xl w-full max-w-sm p-6'>
+                        <div className='flex items-center justify-between mb-6'>
+                            <h3 className='font-bold text-[hsl(var(--foreground))]'>
+                                Bike QR Code
+                            </h3>
+                            <button
+                                onClick={() => setQrBike(null)}
+                                className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+                                X
+                            </button>
+                        </div>
+
+                        <BikeQrCode
+                            bikeId={qrBike._id}
+                            serialNumber={qrBike.serialNumber}
+                            bikeName={qrBike.name}
+                            size={220}
+                            showPrint={true}
+                        />
+
+                        <p className='text-xs text-center text-[hsl(var(--muted-foreground))] mt-4'>
+                            Print and attach to the physical bike.
+                            Customers scan to view and book.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+
+
             {showCreate && (
                 <BikeFormModal
                     onClose={() => setShowCreate(false)}

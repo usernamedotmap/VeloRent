@@ -57,14 +57,18 @@ export const initializePayment = async (
   // check no  existing pending payment already exists
   const existingPayment = await Payment.findOne({
     reservationId,
-    status: "pending",
+    status: { $in: ["pending", "paid"] },
   });
 
-  if (existingPayment) {
-    // return exisint client_key - customer can resume payment
+  if (existingPayment?.status === "paid") {
+    throw Errors.badRequest(`This reservation is already paid.`);
+  }
+
+  if (existingPayment?.status === "pending") {
+    console.log("[PAYMENT] returning existing pending payment intent");
     return {
       clientKey: existingPayment.clientKey,
-      paymentId: existingPayment._id,
+      payment: String(existingPayment._id),
       amount: existingPayment.amount,
     };
   }
@@ -217,7 +221,6 @@ export const handleWebhook = async (
   if (intentId) {
     // Card payments always have an intentId
     paymentRecord = await Payment.findOne({ providerRef: intentId });
-    console.log("[WEBHOOK] Searching by intentId:", intentId);
   } else if (reservationId) {
     // GCash/Source flow might not have intentId in the metadata, use reservationId
     paymentRecord = await Payment.findOne({

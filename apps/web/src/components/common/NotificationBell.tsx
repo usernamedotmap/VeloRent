@@ -127,7 +127,7 @@ export default function NotificationBell() {
                                 Notifications
                             </h3>
                             {unreadCount > 0 && (
-                                <span className="text-xs bg-[hsl(var(--primary/0.1))] text-[hsl(var(--primary))] font-semibold px-2 py-0.5 rounded-full">
+                                <span className="text-xs bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] font-semibold px-2 py-0.5 rounded-full">
                                     {unreadCount} new
                                 </span>
                             )}

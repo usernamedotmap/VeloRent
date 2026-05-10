@@ -14,7 +14,7 @@ export interface CardData {
 
 
 interface Props {
-    onChange: (data: CardData) => void;
+    onChange: (data: CardData | null) => void;
 }
 
 // format card number wtih space

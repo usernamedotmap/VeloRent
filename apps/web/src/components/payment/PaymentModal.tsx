@@ -26,11 +26,12 @@ interface Props {
     reservationId: string;
     onClose: () => void;
     onSuccess: () => void;
+    onFailed: () => void;
 }
 
 
 export default function PaymentModal({
-    clientKey, amount, reservationId, onClose, onSuccess
+    clientKey, amount, reservationId, onClose, onSuccess, onFailed
 }: Props) {
     const user = useAuthStore((s) => s.user);
     const intentId = getIntentId(clientKey);
@@ -381,13 +382,20 @@ export default function PaymentModal({
                                 status={step as any}
                                 amount={amount}
                                 reservationId={reservationId}
-                                onRetry={() => setStep('select')}
+                                onRetry={() => {
+                                    onFailed?.();
+                                    setStep('select');
+                                    setMethod(null);
+                                } }
                                 errorMessage={errorMsg}
                             />
                         )}
                     </div>
                 </div>
             </div>
+
+
+     
 
             {/* 3DS iframe modal - renders on top of payment modal */}
             {step === '3ds' && threeDsUrl && (
