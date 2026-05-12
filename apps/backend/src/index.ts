@@ -66,6 +66,7 @@ app.use(hppProtection);
 app.use(requestSizeLimiter);
 
 // global rate litmiter
+app.set("trust proxy", 1);
 app.use(globalLimiter);
 
 //csrf protection
@@ -82,7 +83,7 @@ app.use(`${PATH}/reservation`, reservationRoutes);
 // payment
 app.use(`${PATH}/payment`, paymentRoutes);
 // notification
-app.use(`${PATH}/notifications`, notificationRoutes)
+app.use(`${PATH}/notifications`, notificationRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({
@@ -129,9 +130,9 @@ const start = async () => {
   initSocket(httpServer);
 
   httpServer.listen(ENV.PORT, () => {
-     console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
+    console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
     console.log(`📋 Health: http://localhost:${ENV.PORT}/api/health`);
-  })
+  });
 };
 
 start();
