@@ -46,7 +46,7 @@ function StatusTimeline({ status }: { status: string }) {
                 {/* progress line */}
                 <div className="absolute top-5 left-5 h-0.5 bg-[hsl(var(--primary))] transition-all duration-700"
                     style={{
-                        width: `${(Math.max(0, currentIndex) / (TIMELINE_STEPS.length - 1)) * (100 - 10)}%`
+                        width: `${(Math.max(0, currentIndex) / (TIMELINE_STEPS.length - 1)) * 100}%`
                     }} />
 
                 {TIMELINE_STEPS.map(({ status: s, label, icon }, i) => {
@@ -75,7 +75,7 @@ function StatusTimeline({ status }: { status: string }) {
     );
 }
 
-export default function AdminReservationDetailPage() {
+export default function OperatorReservationDetailPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -166,7 +166,7 @@ export default function AdminReservationDetailPage() {
             {/* back + header */}
             <div className="flex items-center gap-4">
                 <button
-                    onClick={() => navigate(ROUTES.ADMIN)}
+                    onClick={() => navigate(ROUTES.OPERATOR)}
                     className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
                     <ArrowLeft size={20} />
                 </button>
@@ -323,11 +323,6 @@ export default function AdminReservationDetailPage() {
                     </p>
                 </div>
             )}
-
-           
-
-           
-          
         </div>
     );
 }

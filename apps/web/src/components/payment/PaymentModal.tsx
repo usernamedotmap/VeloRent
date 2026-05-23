@@ -68,7 +68,7 @@ export default function PaymentModal({
 
             attempts++;
 
-            const delay = attempts <= 5 ? 2000 : attempts <= 10 ? 4000  : 6000;
+            const delay = attempts <= 5 ? 2000 : attempts <= 10 ? 4000 : 6000;
             await new Promise((r) => setTimeout(r, delay)); // wait 3s between polls
 
             try {
@@ -197,7 +197,7 @@ export default function PaymentModal({
                 await pollIntentStatus();
             }
         } catch (err: any) {
-            const msg =  err?.response?.data?.errors?.[0]?.detail ?? 'Payment failed.';
+            const msg = err?.response?.data?.errors?.[0]?.detail ?? 'Payment failed.';
             setErrorMsg(msg);
         } finally {
             setIsProcessing(false);
@@ -213,12 +213,16 @@ export default function PaymentModal({
 
     //  prevent close during processes
     const handleClose = () => {
-        if (step === 'processing') return;
-        if (step === 'success') {
-            onSuccess(); return;
+        if (step === "processing") return;
+
+        if (step === "success") {
+            onSuccess();
+            return;
         }
-        onSuccess();
+
+        onClose();
     };
+
 
     const canClose = step !== 'processing';
 
@@ -255,7 +259,7 @@ export default function PaymentModal({
                         </div>
                         {canClose && (
                             <button
-                                onClick={onClose}
+                                onClick={handleClose}
                                 className="w-8 h-8 rounded-full flex items-center justify-center text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] transition-colors">
                                 <X size={18} />
                             </button>
@@ -386,7 +390,7 @@ export default function PaymentModal({
                                     onFailed?.();
                                     setStep('select');
                                     setMethod(null);
-                                } }
+                                }}
                                 errorMessage={errorMsg}
                             />
                         )}
@@ -395,7 +399,7 @@ export default function PaymentModal({
             </div>
 
 
-     
+
 
             {/* 3DS iframe modal - renders on top of payment modal */}
             {step === '3ds' && threeDsUrl && (
@@ -403,7 +407,7 @@ export default function PaymentModal({
                     url={threeDsUrl}
                     onComplete={handle3DSComplete}
                     onClose={() => {
-                        
+
                         setThreeDsUrl('');
                         setMethod(null);
                         setErrorMsg('');

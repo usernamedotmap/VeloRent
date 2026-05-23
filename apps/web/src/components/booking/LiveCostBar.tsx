@@ -45,14 +45,6 @@ const LiveCostBar = () => {
                             {totalCost > 0 ? formatPeso(totalCost) : '—'}
                         </div>
                     </div>
-                    <Button
-                        onClick={() => setStep(2)}
-                        disabled={!canProceed}
-                        size='sm'
-                        className='bg-white text-[hsl(var(--primary))] hover:bg-white/90 font-semibold px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100'
-                        aria-label="Proceed to choose slot">
-                        Next <ArrowRight size={14} />
-                    </Button>
                 </div>
             </div>
 

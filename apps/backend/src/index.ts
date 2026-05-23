@@ -23,6 +23,8 @@ import { initCronJobs } from "./services/cron.service";
 import adminRoutes from "./routes/admin.route";
 import { initSocket } from "./config/socket";
 import notificationRoutes from "./routes/notificationEvent.route";
+import { verifyMailer } from "./config/mailer";
+import { getMqttClient } from "./config/mqtt";
 
 const app = express();
 const PATH = ENV.BASE_PATH;
@@ -123,12 +125,12 @@ app.use(errorHandler);
 
 const start = async () => {
   await connectDB();
+  await verifyMailer();
+  getMqttClient();
   initCronJobs();
 
   const httpServer = http.createServer(app);
-
   initSocket(httpServer);
-
   httpServer.listen(ENV.PORT, () => {
     console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
     console.log(`📋 Health: http://localhost:${ENV.PORT}/api/health`);

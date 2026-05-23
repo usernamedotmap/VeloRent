@@ -267,6 +267,39 @@ export const runElapsedUpdate = async (): Promise<void> => {
   }
 };
 
+export const runPendingReservationExpiry = async (): Promise<void> => {
+  const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+  const expired = await Reservation.find({
+    status: "pending",
+    channel: "online",
+    createdAt: { $lt: fifteenMinsAgo },
+  });
+
+  if (expired.length === 0) return;
+
+  console.log(`[CRON] Expiring ${expired.length} unpaid reservations`);
+
+  for (const reservation of expired) {
+    try {
+      // releases bikes
+      const bikeIds = reservation.items.map((i) => i.bikeId);
+      await Bike.updateMany(
+        { _id: { $in: bikeIds}, status: 'reserved'},
+        { $set: { status: 'available' } },
+      );
+
+      reservation.status = 'cancelled';
+      reservation.cancellationReason = 'Payment not completed withing 15 minutes';
+      await reservation.save();
+
+      console.log(`[CRON] Expired reservation ${reservation._id}`);
+    } catch (err) {
+      console.log(`[CRON] Failed to expire ${reservation._id}:`, err);
+    }
+  }
+};
+
 // -- register all the jobs here ---- okay ?
 export const initCronJobs = (): void => {
   // Every 5 minutes - warin + overdue checks okay so gana per 5 mins
@@ -274,6 +307,7 @@ export const initCronJobs = (): void => {
     console.log(`[CRON] Running checks at ${new Date().toISOString()}`);
     await runWarningCheck();
     await runOverdueCheck();
+    await runPendingReservationExpiry();
   });
 
   //  Every minute - sync elapsd seconds
@@ -290,6 +324,7 @@ export const initCronJobs = (): void => {
   cron.schedule("*/30 * * * *", async () => {
     await retryFailedNotifications();
   });
-
-  
 };
+
+
+

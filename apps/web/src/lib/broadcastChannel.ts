@@ -56,7 +56,7 @@ class SessionBroadcaster {
       console.warn('[SessionBroadcaster] BroadcastChannel not available, skipping broadcast');
       return;
     }
-
+    
     const message: SessionMessage = {
       type,
       data,

@@ -12,6 +12,7 @@ import {
   createDashboardNotifcation,
   dashboardToSocketEvent,
 } from "./notifcationEvent.service";
+import { publishTimerCommand } from "../config/mqtt";
 
 const RATE_PER_HOUR = 15000;
 const OVERDUE_RATE = 5000;
@@ -390,28 +391,24 @@ export const cancelReservation = async (
   const reservation = await Reservation.findById(id);
   if (!reservation) throw Errors.notFound("Reservation");
 
-  if (role === "customer" && extractOwnerId(reservation.userId) !== userId) {
-    throw Errors.forbidden("You cannot cancel this reservation");
-  }
-
-  // Cutomer can only cancel their own
+  // ownershot check
   if (role === "customer") {
-    const ownerId =
-      typeof reservation.userId === "object"
-        ? String((reservation.userId as any)._id)
-        : String(reservation.userId);
-
+    const ownerId = extractOwnerId(reservation.userId);
     if (ownerId !== userId) {
       throw Errors.forbidden("You cannot cancel this reservation.");
     }
   }
 
-  // can only cancel pending or confirmed
-  const cancellableStatuses = ["pending", "confirmed"];
-  if (!cancellableStatuses.includes(reservation.status)) {
+  // Cutomer can only cancel their own
+  const cancellabeStatuses =
+    role === "customer" ? ["pending"] : ["pending", "confirmed"];
+
+  if (!cancellabeStatuses.includes(reservation.status)) {
     throw Errors.badRequest(
-      `Cannot cancel a reservation with status "${reservation.status}". ` +
-        `Only pending or confirmed reservations can be cancelled.`,
+      `Cannot cancel a reservation with status "${reservation.status}".` +
+        (role === "customer" && reservation.status === "confirmed"
+          ? " Your payment has already been confirmed. Please contact support for a refund."
+          : ""),
     );
   }
 
@@ -499,6 +496,12 @@ export const startReservationItem = async (
   }
 
   await reservation.save();
+
+  publishTimerCommand(reservationId, itemId, "start", {
+    slotSeconds: reservation.slotHours * 3600,
+    bikeId: String(item.bikeId),
+  });
+
   return reservation;
 };
 
@@ -579,5 +582,11 @@ export const completeReservationItem = async (
   }
 
   await reservation.save();
+
+  publishTimerCommand(reservationId, itemId, "complete", {
+    totalCost: reservation.totalCost,
+    overdueCost: Math.max(0, reservation.totalCost - reservation.baseCost),
+  });
+  
   return reservation;
 };

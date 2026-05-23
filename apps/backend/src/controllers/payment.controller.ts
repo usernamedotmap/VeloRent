@@ -39,7 +39,7 @@ export const webhookHandler = async (req: Request, res: Response) => {
     
 
   } catch (err: any) {
-    console.log("[WEBHOOK ERROR]", err.message);
+    console.log("[WEBHOOK ERROR]", err);
     res.status(200).json({ received: false });
   }
 };

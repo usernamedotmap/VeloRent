@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ReservationStatusBadge } from "../common/StatusBadge";
 import { formatDate, formatPeso } from "@/lib/utils";
 import { Bike, Calendar, Clock } from "lucide-react";
+import { useMe } from "@/hooks/useAuth";
 
 
 interface Props {
@@ -11,13 +12,17 @@ interface Props {
     showUser?: boolean;
 }
 
-export default function ReservationCard({reservation, showUser}: Props) {
+export default function ReservationCard({ reservation, showUser }: Props) {
     const user = typeof reservation.userId === 'object' ? reservation.userId : null;
     const payment = typeof reservation.paymentId === 'object' ? reservation.paymentId : null;
+    const { data } = useMe();
+    if (!data) return;
+
+
     return (
         <Link
-        to={ROUTES.ADMIN_RESERVATION(reservation._id)}
-        className="block bg-[hsl(var(--card))] rounded-2xl border border-[hsl(var(--border))] p-5 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+            to={data.role === 'admin' ? ROUTES.ADMIN_RESERVATION(reservation._id) : ROUTES.OPERATOR_RESERVATION(reservation._id)}
+            className="block bg-[hsl(var(--card))] rounded-2xl border border-[hsl(var(--border))] p-5 hover:shadow-md hover:-translate-y-0.5 transition-all group">
             {/* header */}
             <div className="flex items-start justify-between mb-4">
                 <div>
@@ -63,10 +68,10 @@ export default function ReservationCard({reservation, showUser}: Props) {
 
             {/* view arrow */}
             <div className="mt-4 text-xs text-[hsl(var(--primary))] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                 View details →
+                View details →
             </div>
 
-            
+
         </Link>
     )
 

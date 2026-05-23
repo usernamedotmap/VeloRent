@@ -18,6 +18,7 @@ export const ROUTES = {
   OPERATOR: "/operator",
   OPERATOR_WALKIN: "/operator/walk-in",
   OPERATOR_RIDES: "/operator/rides",
+  OPERATOR_RESERVATION: (id: string) => `/operator/reservation/${id}`,
 
   // admin
   ADMIN: "/admin",

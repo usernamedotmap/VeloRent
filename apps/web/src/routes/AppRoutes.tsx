@@ -22,6 +22,7 @@ import AdminUsersPage from "@/pages/admin/UsersPage";
 import AdminPaymentPage from "@/pages/admin/PaymentPage";
 import AdminLayout from "@/layouts/AdminLayout";
 import AdminReservationDetailPage from "@/pages/admin/AdminReservationDetailPage";
+import OperatorReservationDetailPage from "@/pages/operator/OperatorReservationDetailPage";
 
 
 export function AppRoutes() {
@@ -51,6 +52,7 @@ export function AppRoutes() {
                 <Route path="/operator" element={<OperatorDashboard />} />
                 <Route path="/operator/walk-in" element={<WalkInPage />} />
                 <Route path="/operator/rides" element={<ActiveRidesPage />} />
+                <Route path="/operator/reservation/:id" element={<OperatorReservationDetailPage />} />
             </Route>
 
             <Route element={<RequireAuth roles={['admin']}>

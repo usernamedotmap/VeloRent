@@ -13,9 +13,6 @@ export const connectSocket = (): Socket => {
     return match ? decodeURIComponent(match.split("=")[1]) : null;
   };
 
-  console.log("[SOCKET] Cookie token found:", !!getTokenFromCookie());
-  console.log("[SOCKET] All cookies:", document.cookie);
-
   socket = io(import.meta.env.VITE_API_SOCKET_URL ?? "http://localhost:4000", {
     withCredentials: true,
     transports: ["websocket", "polling"],
@@ -31,7 +28,7 @@ export const connectSocket = (): Socket => {
   });
 
   socket.on("connect", () => {
-    console.log("[SOCKET] Connected:", socket?.id);
+    console.log("[SOCKET] Connected:");
   });
 
   socket.on("connect_error", (err) => {

@@ -52,6 +52,12 @@ export const useTokenRefresh = () => {
     timerRef.current = setTimeout(doRefresh, delay);
   }, [tokenExpiresAt, doRefresh, clearTimer]);
 
+  const redirctToLogin = () => {
+    if (window.location.pathname !== "/login") {
+      window.location.href = "/login";
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       clearTimer();
@@ -64,19 +70,19 @@ export const useTokenRefresh = () => {
   useEffect(() => {
     const unsubRefreshed = sessionBroadcaster.on("token-refreshed", () => {
       // tab refresh the other tab imean
-      scheduleRefresh();
+      recordTokenIssued();
     });
 
     const unsubLogout = sessionBroadcaster.on("logout", () => {
       clearTimer();
       logout();
-      window.location.href = "/login";
+      redirctToLogin();
     });
 
     const unsubExpired = sessionBroadcaster.on("session-expired", () => {
       clearTimer();
       logout();
-      window.location.href = "/login";
+      redirctToLogin();
     });
 
     return () => {

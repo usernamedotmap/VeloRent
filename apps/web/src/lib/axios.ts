@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { sessionBroadcaster } from "./broadcastChannel";
 
@@ -31,9 +31,10 @@ const handleForceLogout = async () => {
     useAuthStore.getState().logout();
   } catch {
     localStorage.removeItem("velorent-auth");
-    sessionBroadcaster.broadcast("logout");
   }
-  window.location.href = "/login";
+  if (window.location.pathname !== "/login") {
+    window.location.href = "/login";
+  }
 };
 
 // respose interfaceptors
@@ -45,7 +46,7 @@ api.interceptors.response.use(
     };
 
     const data = error.response?.data as any;
- 
+
     // 1. checking
     const status = error.response?.status;
     const errorCode = data?.error?.code;
@@ -95,17 +96,10 @@ api.interceptors.response.use(
       }
     }
 
-    if (
-      status === 401 && 
-      (errorCode === 'INVALID_TOKEN') &&
-      !isAuthRoute
-    ) {
+    if (status === 401 && errorCode === "INVALID_TOKEN" && !isAuthRoute) {
       await handleForceLogout();
     }
 
     return Promise.reject(error);
-  
   },
 );
-
-

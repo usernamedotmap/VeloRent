@@ -9,6 +9,7 @@ import PaymentModal from "@/components/payment/PaymentModal";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constant/routes";
 import { useCancelReservation } from "@/hooks/useReservation";
+import { api } from "@/lib/axios";
 import { formatPeso } from "@/lib/utils";
 import { useBookingStore } from "@/stores/booking.store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,73 +22,59 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsIntentionallyLeaving: (val: boolean) => void }) {
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
-    const [showModal, setShowModal] = useState(false);
-
-    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-    const [isCancelling, setIsCancelling] = useState(false);
-
+    // booking store
     const clientKey = useBookingStore((s) => s.clientKey);
     const reservationId = useBookingStore((s) => s.reservationId);
     const totalCost = useBookingStore((s) => s.totalCost());
     const selectedBikes = useBookingStore((s) => s.selectedBikes);
     const slotHours = useBookingStore((s) => s.slotHours);
-    const paymentStatus = useBookingStore((s) => s.paymentStatus);
+    const paymentStatus = useBookingStore((s) => s.paymentStatus)
     const setPaymentStatus = useBookingStore((s) => s.setPaymentStatus);
     const reset = useBookingStore((s) => s.reset);
 
+    // local state dito
+    const [showModal, setShowModal] = useState(false);
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
+    const [backendStatus, setBackendStatus] = useState<string | null>(null);
+
     const { mutate: cancelReservation } = useCancelReservation(reservationId ?? '');
 
+    const isAlreadyPaid = backendStatus === 'confirmed';
+    const canCancel = backendStatus === 'pending' || backendStatus === null;
+    const isPaymentLocked = ['initiated', 'processing', 'completed'].includes(paymentStatus);
 
     useEffect(() => {
-        if (paymentStatus !== 'initiated') return;
+        if (!reservationId) return;
 
-        const handleFocus = () => {
-            // user RETURN this tab after
+        const checkStatus = async () => {
+            try {
+                const { data } = await api.get(`/reservation/${reservationId}`);
+                const status = data.data?.status;
+                setBackendStatus(status);
 
-            if (paymentStatus === 'initiated') {
-                setShowModal(true);
-                setPaymentStatus('processing');
-            }
+                if (status === 'confirmed') {
+                    setPaymentStatus('completed');
+                } else if (status === 'cancelled') {
+                    setPaymentStatus('failed')
+                }
+            } catch { }
         };
 
-        window.addEventListener('focus', handleFocus);
-        return () => window.removeEventListener('focus', handleFocus);
-    }, [paymentStatus]);
+        checkStatus();
+
+        window.addEventListener('focus', checkStatus);
+        return () => window.removeEventListener('focus', checkStatus);
+    }, [reservationId]);
+
 
     const handleOpenPayment = () => {
         setPaymentStatus('initiated');
         setShowModal(true);
     };
-
-    const isPaymentLocked = ['initiated', 'processing', 'completed'].includes(paymentStatus);
-    const handleCancelAndGoBack = () => {
-        if (!reservationId) {
-            reset();
-            navigate(ROUTES.BIKES);
-            return;
-        }
-
-        setIsIntentionallyLeaving(true);
-        setIsCancelling(true);
-
-        cancelReservation('Customer cancelled before payment', {
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['reservations'] });
-                queryClient.invalidateQueries({ queryKey: ['bikes'] });
-                reset();
-                navigate(ROUTES.BIKES);
-            },
-            onError: () => {
-                // kahit na mag fail yung api ng cancel, still ma reset all state
-                reset();
-                navigate(ROUTES.BIKES)
-            },
-            onSettled: () => setIsCancelling(false),
-        });
-    }
 
     const handleSuccess = () => {
         setShowModal(false);
@@ -102,9 +89,84 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
         }
     };
 
+    const handleCancelAndGoBack = () => {
+        if (!reservationId) {
+            reset();
+            navigate(ROUTES.BIKES);
+            return;
+        }
+
+        setIsCancelling(true);
+        setIsIntentionallyLeaving(true);
+
+        cancelReservation('Customer cancelled before payment',
+            {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ['reservations'] });
+                    queryClient.invalidateQueries({ queryKey: ['bikes'] });
+                    reset();
+                    navigate(ROUTES.BIKES);
+                },
+                onError: () => {
+                    // even tho na mag fail api - reset yan and go back
+                    reset();
+                    navigate(ROUTES.BIKES);
+                },
+                onSettled: () => {
+                    setIsCancelling(false);
+                    setIsIntentionallyLeaving(false);
+                },
+            }
+        );
+    }
+
     return (
         <>
             <div className="space-y-6">
+                {isAlreadyPaid && (
+                    <div className="bg-green-50 border border-green-200 rounded-2xl px-4 py-4 flex items-center gap-3">
+                        <span className="text-2xl">🎉</span>
+                        <div className="flex-1">
+                            <p className="font-bold text-sm text-green-700">
+                                Payment already completed!
+                            </p>
+                            <p className="text-xs text-green-600">
+                                Your booking is confirmed.  See you at the park!
+                            </p>
+                        </div>
+                        <Button
+                            size="sm"
+                            onClick={() => {
+                                reset();
+                                navigate(ROUTES.RESERVATION(reservationId!));
+                            }}>
+                            View Booking →
+                        </Button>
+                    </div>
+                )}
+
+                {/* payment in progres banner */}
+                {paymentStatus === 'initiated' && !showModal && !isAlreadyPaid && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+                        <span className="text-xl">⏳</span>
+                        <div className="flex-1">
+                            <p className="font-bold text-sm text-amber-700">
+                                Payment in progress
+                            </p>
+                            <p className="text-xs text-amber-600">
+                                Complete your payment in the other tab, or check status below.
+                            </p>
+                        </div>
+                        <Button
+                            size="sm"
+                            onClick={() => {
+                                setShowModal(true);
+                                setPaymentStatus('processing');
+                            }}>
+                            Check Status
+                        </Button>
+                    </div>
+                )}
 
                 {/* order summary  */}
                 <div className="bg-[hsl(var(--card))] rounded-2xl border border-[hsl(var(--border))] overflow-hidden">
@@ -228,30 +290,6 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                 </div>
             )}
 
-            {/* show status banner */}
-            {paymentStatus === 'initiated' && !showModal && (
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-                    <span className="text-xl">⏳</span>
-                    <div className="flex-1">
-                        <p className="font-bold text-sm text-amber-700">
-                            Payment in progress
-                        </p>
-                        <p className="text-xs text-amber-600">
-                            Complete your payment in the other tab, or click below to check status.
-                        </p>
-                    </div>
-                    <Button
-                        size="sm"
-                        onClick={() => {
-                            setShowModal(true);
-                            setPaymentStatus('processing')
-                        }}>
-                        Check Status
-                    </Button>
-                </div>
-            )}
-
-
 
 
             {showModal && clientKey && reservationId && (
@@ -259,7 +297,9 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                     clientKey={clientKey}
                     amount={totalCost}
                     reservationId={reservationId}
-                    onClose={() => setShowModal(false)}
+                    onClose={() => {
+                        setShowModal(false);
+                    }}
                     onSuccess={() => {
                         setPaymentStatus('completed');
                         handleSuccess();

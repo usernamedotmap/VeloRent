@@ -21,7 +21,7 @@ export const useMe = () => {
     queryKey: QUERY_KEYS.ME,
     queryFn: async () => {
       const { data } = await api.get<{ success: boolean; data: User }>(
-        "/auth/me",
+        "/auth/me", 
       );
       setUser(data.data);
       return data.data;
@@ -50,8 +50,6 @@ export const useLogin = () => {
       return { user: data.data, redirectTo };
     },
     onSuccess: ({ user, redirectTo }) => {
-      console.log("1. User set:", user.role);
-      console.log("2. Redirecting to:", redirectTo || "Default Role Route");
       setUser(user);
       recordTokenIssued();
       queryClient.setQueryData([QUERY_KEYS.ME], { data: user });
