@@ -1,4 +1,4 @@
-import { attachPaymentMethod, createEWalletSource, createMayaPaymentMethod, createPaymentMethod, getIntentId, retrievePaymentIntent } from "@/lib/paymongo";
+import { attachPaymentMethod, createEWalletSource, createMayaPaymentMethod, createPaymentMethod, createQRPhPaymentMethod, getIntentId, retrievePaymentIntent } from "@/lib/paymongo";
 import { useAuthStore } from "@/stores/auth.store";
 import { useCallback, useState } from "react";
 import PaymentMethodSelector, { PaymentMethod } from "./PaymentMethodSelector";
@@ -15,6 +15,7 @@ type ModalStep =
     | 'card-form'
     | 'ewallet'
     | '3ds'
+    | 'qrph'
     | 'processing'
     | 'success'
     | 'failed'
@@ -148,6 +149,38 @@ export default function PaymentModal({
         }
     };
 
+    const handleQRPhPay = async () => {
+        setIsProcessing(true);
+        setErrorMsg('');
+        try {
+            const methodId = await createQRPhPaymentMethod(billing);
+            const intent = await attachPaymentMethod(intentId, methodId, clientKey, returnUrl);
+            const status = intent.attributes.status;
+            const next = intent.attributes.next_action;
+
+            if (status === 'succeeded') {
+                setStep('success');
+                onSuccess();
+                return;
+            }
+
+            if (status === 'awaiting_next_action' && next) {
+                const qrImage = next.qr_code?.image_url ?? next.image_url;
+                if (qrImage) {
+                    setEWalletUrl(qrImage);
+                    setStep('qrph');
+                    return;
+                }
+            }
+
+            await pollIntentStatus();
+        } catch (err: any) {
+            setErrorMsg(err?.response?.data?.errors?.[0]?.detail ?? 'QR Ph failed.');
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
     // hanlde ewallet 
     const handleEWalletPay = async () => {
         if (!method || method === 'card') return;
@@ -169,33 +202,35 @@ export default function PaymentModal({
                 return;
             }
 
-            if (method === 'paymaya') {
-                const methodId = await createMayaPaymentMethod(billing);
+            if (method)
 
-                const intent = await attachPaymentMethod(
-                    intentId,
-                    methodId,
-                    clientKey,
-                    returnUrl
-                );
+                if (method === 'paymaya') {
+                    const methodId = await createMayaPaymentMethod(billing);
 
-                const status = intent.attributes.status;
-                const nextAction = intent.attributes.next_action;
+                    const intent = await attachPaymentMethod(
+                        intentId,
+                        methodId,
+                        clientKey,
+                        returnUrl
+                    );
 
-                if (status === 'succeeded') {
-                    setStep('success');
-                    onSuccess();
-                    return;
+                    const status = intent.attributes.status;
+                    const nextAction = intent.attributes.next_action;
+
+                    if (status === 'succeeded') {
+                        setStep('success');
+                        onSuccess();
+                        return;
+                    }
+
+                    if (status === 'awaiting_next_action' && nextAction?.redirect?.url) {
+                        setEWalletUrl(nextAction.redirect.url);
+                        setStep('ewallet');
+                        return;
+                    }
+
+                    await pollIntentStatus();
                 }
-
-                if (status === 'awaiting_next_action' && nextAction?.redirect?.url) {
-                    setEWalletUrl(nextAction.redirect.url);
-                    setStep('ewallet');
-                    return;
-                }
-
-                await pollIntentStatus();
-            }
         } catch (err: any) {
             const msg = err?.response?.data?.errors?.[0]?.detail ?? 'Payment failed.';
             setErrorMsg(msg);
@@ -231,6 +266,7 @@ export default function PaymentModal({
         select: 'Choose Payment Method',
         'card-form': 'Enter Card Details',
         ewallet: 'Complete Payment',
+        qrph: 'QR Ph',
         '3ds': '3D Secure',
         processing: 'Processing...',
         success: 'Payment Complete',
@@ -289,9 +325,10 @@ export default function PaymentModal({
                                     size="lg"
                                     disabled={!method}
                                     onClick={() => {
-                                        if (method === 'card')
-                                            setStep('card-form');
-                                        else handleEWalletPay();
+                                        if (method === 'card') setStep('card-form');
+                                        if (method === 'qrph') handleQRPhPay();
+                                        if (method === 'gcash') handleEWalletPay();
+                                        if (method === 'paymaya') handleEWalletPay();
                                     }}
                                     loading={isProcessing}>
                                     Continue →
@@ -331,6 +368,46 @@ export default function PaymentModal({
                                         Pay {formatPeso(amount)}
                                     </Button>
                                 </div>
+                            </div>
+                        )}
+
+                        {/* qrph here */}
+                        {step === 'qrph' && (
+                            <div className="space-y-5 text-center">
+                                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                                    Scan with GCash, Maya, BPI, or any QRPh app
+                                </p>
+                                <div className="flex justify-center">
+                                    <div className="bg-white p-4 rounded-2xl border-2 border-[hsl(var(--border))] shadow-sm">
+                                        {eWalletUrl.startsWith('data:') ? (
+                                            <img src={eWalletUrl} alt="QR Ph Code" className="w-48 h-48" />
+                                        ) : (
+                                            <img src={eWalletUrl} alt="QR Ph Code" className="w-48 h-48" />
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-xs text-amber-700">
+                                    ⏰ QR code expires in <strong>10 minutes</strong>
+                                </div>
+
+                                <Button
+                                    variant="outline"
+                                    fullWidth
+                                    onClick={() => pollIntentStatus()}>
+                                    I've completed payment
+                                </Button>
+
+                                <Button
+                                    variant="ghost"
+                                    fullWidth
+                                    onClick={() => {
+                                        setStep('select');
+                                        setErrorMsg('');
+                                    }}>
+                                    ← Choose different method
+                                </Button>
+
                             </div>
                         )}
 

@@ -84,10 +84,10 @@ export const initializePayment = async (
     data: {
       attributes: {
         amount: reservation.baseCost,
-        payment_method_allowed: ["gcash", "paymaya", "card"], // for now allow all methods - let user choose in paymongo UI
+        payment_method_allowed: ["gcash", "paymaya", "card", "qrph"], // for now allow all methods - let user choose in paymongo UI
         currency: "PHP",
         description: `VeloRent booking ${reservationId}`,
-        statement_descriptor: "VELORENT",
+        statement_descriptor: "VELORENT", 
         metadata: {
           reservationId: String(reservationId),
           userId,

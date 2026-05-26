@@ -51,7 +51,7 @@ export const createMayaPaymentMethod = async (billing: BillingDetails) => {
         },
       },
     },
-  })
+  });
   return data.data.id as string;
 };
 
@@ -77,6 +77,31 @@ export const createPaymentMethod = async (
       },
     },
   });
+  return data.data.id as string;
+};
+
+// qrph payment method
+export const createQRPhPaymentMethod = async (billing: BillingDetails) => {
+  const { data } = await paymongoPublic.post("/payment_methods", {
+    data: {
+      attributes: {
+        type: "qrph",
+        billing: {
+          name: billing.name,
+          email: billing.email,
+          phone: billing.phone,
+          address: {
+            line1: "N/A",
+            city: "Manila",
+            state: "Metro Manila",
+            postal_code: "1000",
+            country: "PH",
+          },
+        },
+      },
+    },
+  });
+
   return data.data.id as string;
 };
 

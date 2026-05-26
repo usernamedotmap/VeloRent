@@ -214,6 +214,7 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                             { emoji: '💙', label: 'GCash' },
                             { emoji: '💚', label: 'Maya' },
                             { emoji: '💳', label: 'Visa/MC' },
+                            { emoji: '📱', label: 'QR Ph' },
                         ].map(({ emoji, label }) => (
                             <div
                                 key={label}
