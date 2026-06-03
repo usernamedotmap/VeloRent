@@ -68,7 +68,6 @@ export default function PaymentModal({
             }
 
             attempts++;
-
             const delay = attempts <= 5 ? 2000 : attempts <= 10 ? 4000 : 6000;
             await new Promise((r) => setTimeout(r, delay)); // wait 3s between polls
 
@@ -80,7 +79,6 @@ export default function PaymentModal({
                     setStep('success');
                     onSuccess();
                 } else if (status === 'awaiting_next_action') {
-                    // 3DS neeeded - show ifreame
                     const url = intent.attributes.next_action?.redirect?.url;
                     if (url) {
                         setThreeDsUrl(url);
@@ -90,12 +88,12 @@ export default function PaymentModal({
                     }
                 } else if (status === 'processing') {
                     await poll();
+                } else if (status === 'awaiting_payment_method') {
+                    // payment not still gawa - so keep polling
+                    await poll();
                 } else {
                     setStep('failed');
-                    setErrorMsg(
-                        intent.attributes.last_payment_error?.failed_message ??
-                        'Payment was not successful.'
-                    );
+                    setErrorMsg(intent.attributes.last_payment_error?.failed_message ?? 'Payment was not successful.');
                 }
             } catch {
                 await poll();
@@ -149,6 +147,15 @@ export default function PaymentModal({
         }
     };
 
+    const getQRPhImageUrl = (nextAction: any) => {
+        return (
+            nextAction?.code?.image_url ??
+            nextAction?.qr_code?.image_url ??
+            nextAction?.image_url ??
+            null
+        );
+    };
+
     const handleQRPhPay = async () => {
         setIsProcessing(true);
         setErrorMsg('');
@@ -165,16 +172,21 @@ export default function PaymentModal({
             }
 
             if (status === 'awaiting_next_action' && next) {
-                const qrImage = next.qr_code?.image_url ?? next.image_url;
+                const qrImage = getQRPhImageUrl(next)
                 if (qrImage) {
                     setEWalletUrl(qrImage);
                     setStep('qrph');
                     return;
                 }
+
+                console.log("[QRPH] Missing QR image next_action:", next);
+                setErrorMsg("QR Ph code was not returned by Paymongo.");
+                return;
             }
 
             await pollIntentStatus();
         } catch (err: any) {
+            console.log("[QRPH] Error:", err?.response?.data ?? err);
             setErrorMsg(err?.response?.data?.errors?.[0]?.detail ?? 'QR Ph failed.');
         } finally {
             setIsProcessing(false);

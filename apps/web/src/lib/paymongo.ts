@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const PAYMONGO_BASE = "https://api.paymongo.com/v1";
-const IS_PROD = import.meta.env.VITE_NODE_ENV;
+const IS_PROD = import.meta.env.VITE_NODE_ENV === "production";
 
 // public key her
 const getAuthHeader = () => {

@@ -18,7 +18,7 @@ const METHODS = [
         active: 'border-blue-500 bg-blue-50',
         desc: 'GCash, Maya, BPI + 30 banks',
         available: true,
-        badge: null,
+        badge: 'Test only',
     },
     {
         id: 'gcash' as PaymentMethod,
@@ -48,7 +48,7 @@ const METHODS = [
         active: 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.05)]',
         desc: 'Visa / Mastercard',
         available: true,
-        badge: null
+        badge: 'Test only'
     },
 ];
 
@@ -90,13 +90,13 @@ export default function PaymentMethodSelector({ selected, onSelect }: Props) {
             </div>
 
             {/* sanboax */}
-            <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2.5 text-amber-700">
+            {/* <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2.5 text-amber-700">
                 <span className="shrink-0">🧪</span>
                 <p>
                     <strong>Gcash & Maya</strong> are in test mode - use  registered test number only.
                     <strong> QR Ph</strong> and <strong>Card</strong> are live.
                 </p>
-            </div>
+            </div> */}
         </div>
     );
 }

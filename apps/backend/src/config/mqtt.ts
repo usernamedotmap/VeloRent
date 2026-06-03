@@ -14,10 +14,11 @@ export const getMqttClient = (): mqtt.MqttClient => {
     clean: true,
     reconnectPeriod: 5000,
     connectTimeout: 30000,
+    rejectUnauthorized: false, // for self-signed certs, set to true in production with valid certs
   });
 
   client.on("connect", () => {
-    console.log("MQTT connected to HiveMQ");
+    console.log("MQTT connected to HiveMQ or EMQX broker");
 
     // subscribe to device status
     client!.subscribe("velorent/device/+/heartbeat");

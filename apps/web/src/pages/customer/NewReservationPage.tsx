@@ -18,8 +18,8 @@ const STEP_TITLE = [
 const NewReservationPage = () => {
     const [isIntentionallyLeaving, setIsIntentionallyLeaving] = useState(false);
 
-
     const currentStep = useBookingStore((s) => s.currentStep);
+    const paymentStatus = useBookingStore((s) => s.paymentStatus);
     const reset = useBookingStore((s) => s.reset);
     const [searchParams] = useSearchParams();
 
@@ -29,6 +29,7 @@ const NewReservationPage = () => {
         ({ currentLocation, nextLocation }) =>
             !isIntentionallyLeaving &&
             currentStep === 4 &&
+            paymentStatus !== 'completed' &&
             currentLocation.pathname !== nextLocation.pathname
     );
 
