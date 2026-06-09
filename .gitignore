@@ -14,6 +14,9 @@ node_modules/
 *.env
 auth_config.json
 
+# -- continue --
+.continue/
+
 # --- TypeScript & Compilation ---
 # Ignore the compiled output (JavaScript) and TS metadata
 dist/
