@@ -1,10 +1,3 @@
-// import { Button } from '@/components/ui/button';
-// import { formatPeso } from '@/lib/utils';
-// import { useBookingStore } from '@/stores/booking.store';
-// import { ExternalLink } from 'lucide-react';
-// import React, { useState } from 'react'
-// import { useNavigate } from 'react-router-dom';
-
 import PaymentModal from "@/components/payment/PaymentModal";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constant/routes";
@@ -56,10 +49,20 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                 const status = data.data?.status;
                 setBackendStatus(status);
 
-                if (status === 'confirmed') {
-                    setPaymentStatus('completed');
-                } else if (status === 'cancelled') {
-                    setPaymentStatus('failed')
+                if (status !== 'pending') {
+                    // Reservation expired or cancelled — reset and redirect
+                    if (status === 'cancelled') {
+                        alert('Your reservation has expired due to inactivity. Please book again.');
+                        reset();
+                        navigate(ROUTES.BIKES);
+                        return;
+                    }
+                    // Already confirmed (paid in another tab)
+                    if (status === 'confirmed') {
+                        setPaymentStatus('completed');
+                        handleSuccess();
+                        return;
+                    }
                 }
             } catch { }
         };
@@ -72,7 +75,7 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
 
 
     const handleOpenPayment = () => {
-        setPaymentStatus('initiated');
+        setPaymentStatus('processing');
         setShowModal(true);
     };
 
@@ -88,6 +91,13 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
             navigate(ROUTES.DASHBOARD);
         }
     };
+
+    const handleClosePayment = () => {
+        setShowModal(false);
+        if (paymentStatus === 'processing') {
+            setPaymentStatus('initiated');
+        }
+    }
 
     const handleCancelAndGoBack = () => {
         if (!reservationId) {
@@ -209,12 +219,13 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                     <p className="text-xs text-center text-[hsl(var(--muted-foreground))] mb-3">
                         Accepted payment methods
                     </p>
-                    <div className="flex justify-center gap-3">
+                    <div className="flex justify-center gap-3 flex-wrap">
                         {[
+
+                            { emoji: '📱', label: 'QR Ph' },
                             { emoji: '💙', label: 'GCash' },
                             { emoji: '💚', label: 'Maya' },
                             { emoji: '💳', label: 'Visa/MC' },
-                            { emoji: '📱', label: 'QR Ph' },
                         ].map(({ emoji, label }) => (
                             <div
                                 key={label}
@@ -235,7 +246,7 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                 </div>
 
                 {/* navigation */}
-                <div className="flex gap-3 pt-2 border border-[hsl(var(--border))]">
+                <div className="flex gap-3 pt-2 ">
                     <Button variant="outline" onClick={() => setShowCancelConfirm(true)}>
                         ← Cancel
                     </Button>
@@ -298,11 +309,11 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                     clientKey={clientKey}
                     amount={totalCost}
                     reservationId={reservationId}
-                    onClose={() => {
-                        setShowModal(false);
-                    }}
+                    onClose={handleClosePayment}
                     onSuccess={() => {
+                        setShowModal(false);
                         setPaymentStatus('completed');
+
                         handleSuccess();
                     }}
                     onFailed={() => {

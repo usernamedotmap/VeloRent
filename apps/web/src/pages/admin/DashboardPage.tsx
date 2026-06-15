@@ -1,5 +1,7 @@
+import { AdminAnalytics } from '@/components/admin/AdminAnalytics';
 import ReservationCard from '@/components/reservation/ReservationCard';
 import { useAdminStats } from '@/hooks/useAdmin';
+import { useBikes } from '@/hooks/useBike';
 import { useReservations } from '@/hooks/useReservation';
 import { formatPeso } from '@/lib/utils';
 import { Activity, AlertTriangle, Bike, CheckCircle, Clock, CreditCard, TrendingUp, Users } from 'lucide-react';
@@ -37,9 +39,14 @@ const StatCard = ({ icon: Icon, label, value, sub, color }: StatCardProps) => {
 
 
 const AdminDashboard = () => {
-    const { data: stats, isLoading: statsLoading } = useAdminStats();
+    const { data: stats, isLoading: statsLoading } = useAdminStats();   
     const { data: recentData } = useReservations({ limit: 5 });
+
     const recentReservation = recentData?.data ?? [];
+   
+
+
+
     return (
         <div className='p-8 space-y-8'>
 
@@ -61,7 +68,7 @@ const AdminDashboard = () => {
             {/* stats grid */}
             {statsLoading ? (
                 <div className='grid sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-                    {Array.from({ length }).map((_, i) =>
+                    {Array.from({ length: 4 }).map((_, i) =>
                         <div key={i} className='h-32 bg-[hsl(var(--muted))] rounded-2xl animate-pulse' />
                     )}
                 </div>
@@ -125,6 +132,13 @@ const AdminDashboard = () => {
                     </div>
                 </>
             ) : null}
+
+            <div>
+                <h3 className='font-bold text-[hsl(var(--foreground))] mb-4 text-2xl'>
+                    Performance Reports & Analytics
+                </h3>   
+                <AdminAnalytics />
+            </div>
 
             {/* fleet stats */}
             <div className='bg-[hsl(var(--card))] rounded-2xl border border-[hsl(var(--border))] p-6'>

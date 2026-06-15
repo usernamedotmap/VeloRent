@@ -33,7 +33,7 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
 };
 
 // dail trand here
- const getDailyTrend = async (fromDate: Date) => {
+const getDailyTrend = async (fromDate: Date) => {
   const result = await Reservation.aggregate([
     {
       $match: {
@@ -60,7 +60,7 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
   }));
 };
 
- const getSlotDistribution = async (fromDate: Date) => {
+const getSlotDistribution = async (fromDate: Date) => {
   const result = await Reservation.aggregate([
     {
       $match: {
@@ -70,7 +70,7 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
     },
     {
       $group: {
-        _id: "$slotHours    ",
+        _id: "$slotHours",
         count: { $sum: 1 },
       },
     },
@@ -80,13 +80,13 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
   const total = result.reduce((sum, r) => sum + r.count, 0) || 1;
 
   return result.map((r) => ({
-    slotId: r._id,
+    slotHours: r._id,
     count: r.count,
     percentage: (r.count / total) * 100,
   }));
 };
 
- const getChannelBreakdown = async (fromDate: Date) => {
+const getChannelBreakdown = async (fromDate: Date) => {
   const result = await Reservation.aggregate([
     {
       $match: {
@@ -97,8 +97,12 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
     {
       $group: {
         _id: {
-          week: { $week: "$createdAt" },
-          channel: "$channel",
+          week: {
+            $week: {
+              date: "$createdAt",
+              timezone: "Asia/Manila",
+            },
+          },
         },
         count: { $sum: 1 },
       },
@@ -128,7 +132,7 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
   return Array.from(weekMap.values());
 };
 
- const getTopBikes = async (fromDate: Date) => {
+const getTopBikes = async (fromDate: Date) => {
   const result = await Reservation.aggregate([
     {
       $match: {
@@ -170,7 +174,7 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
   return result;
 };
 
- const getPeakHours = async (fromDate: Date) => {
+const getPeakHours = async (fromDate: Date) => {
   const result = await Reservation.aggregate([
     {
       $match: {
@@ -180,7 +184,12 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
     },
     {
       $group: {
-        _id: { $hour: "$scheduledStart" },
+        _id: {
+          $hour: {
+            date: "$scheduledStart",
+            timezone: "Asia/Manila",
+          },
+        },
         count: { $sum: 1 },
       },
     },
@@ -195,7 +204,7 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
   }));
 };
 
- const getRideStatusSummary = async (fromDate: Date) => {
+const getRideStatusSummary = async (fromDate: Date) => {
   const result = await Reservation.aggregate([
     { $match: { createdAt: { $gte: fromDate } } },
     {
@@ -207,8 +216,12 @@ export const getAdminAnalytics = async (rangeDays: number = 30) => {
   ]);
 
   const statusMap: Record<string, number> = {
-    pending: 0, confirmed: 0, active: 0,
-    overdue: 0, completed: 0, cancelled: 0,
+    pending: 0,
+    confirmed: 0,
+    active: 0,
+    overdue: 0,
+    completed: 0,
+    cancelled: 0,
   };
 
   for (const r of result) {

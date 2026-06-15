@@ -157,62 +157,71 @@ const ActiveRidesPage = () => {
                                         return (
                                             <div
                                                 key={item._id}
-                                                className={`flex items-center gap-4 p-3 rounded-xl border ${item.status === 'overdue'
+                                                className={`flex flex-col sm:flex-row items-center gap-4 p-3 rounded-xl border ${item.status === 'overdue'
                                                     ? 'border-red-200 bg-red-50'
                                                     : item.status === 'active'
                                                         ? 'border-green-200 bg-green-50'
                                                         : 'border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.03)]'}`}>
                                                 {/* bike info */}
-                                                <span className='text-xl'>🚲</span>
-                                                <div className='flex-1 min-w-0'>
-                                                    <p className='font-semibold text-sm truncate'>
-                                                        {bike?.name ?? 'Bike'}
-                                                    </p>
-                                                    <div className='flex items-center gap-2 mt-0.5'>
-                                                        <ItemStatusBadge status={item.status} />
-                                                        {item.overdueCost > 0 && (
-                                                            <span className='text-xs text-red-500 font-bold'>
-                                                                +{formatPeso(item.overdueCost)}
-                                                            </span>
-                                                        )}
+                                                <div className='flex items-center gap-3 w-full sm:w-auto flex-1 min-w-0'>
+                                                    <span className='text-xl shrink-0 select-none'>🚲</span>
+                                                    <div className='flex-1 min-w-0'>
+                                                        <p className='font-semibold text-sm truncate text-[hsl(var(--foreground))]'>
+                                                            {bike?.name ?? 'Bike'}
+                                                        </p>
+                                                        {/* FIX: Left-aligned (justify-start) on mobile, 
+              and centered (sm:justify-start or sm:justify-center) depending on desktop needs.
+              We use justify-start here so badge and cost sit neatly next to each other.
+            */}
+                                                        <div className='flex items-center justify-start gap-2 mt-0.5'>
+                                                            <ItemStatusBadge status={item.status} />
+                                                            {item.overdueCost > 0 && (
+                                                                <span className='text-xs text-red-500 font-bold shrink-0'>
+                                                                    +{formatPeso(item.overdueCost)}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
 
-                                                {/* timer (active items only ha) */}
-                                                {item.status === 'active' && item.actualStart && (
-                                                    <div className='shrink-0'>
-                                                        <TimerDisplay
-                                                            startedAt={item.actualStart}
-                                                            slotSeconds={slotSeconds}
-                                                        // isOverdue={item.status === 'overdue'}
-                                                        />
-                                                    </div>
-                                                )}
 
-                                                {/* action button */}
-                                                <div className='shink-0'>
-                                                    {item.status === 'waiting' && (
-                                                        <Button
-                                                            size='sm'
-                                                            onClick={() => handleStarItem(reservation._id, item._id)}>
-                                                            <Play size={14} />
-                                                            Start
-                                                        </Button>
+                                                <div className='flex items-center gap-2 sm:shrink-0 mt-2 sm:mt-0'>
+                                                    {/* timer (active items only ha) */}
+                                                    {item.status === 'active' && item.actualStart && (
+                                                        <div className='shrink-0'>
+                                                            <TimerDisplay
+                                                                startedAt={item.actualStart}
+                                                                slotSeconds={slotSeconds}
+                                                            // isOverdue={item.status === 'overdue'}
+                                                            />
+                                                        </div>
                                                     )}
-                                                    {(item.status === 'active' || item.status === 'overdue') && (
-                                                        <Button
-                                                            size='sm'
-                                                            variant={item.status === 'overdue' ? 'danger' : 'secondary'}
-                                                            onClick={() => handleCompleteItem(reservation._id, item._id)}>
-                                                            <CheckCircle size={14} />
-                                                            Return
-                                                        </Button>
-                                                    )}
-                                                    {item.status === 'completed' && (
-                                                        <span className='text-xs text-[hsl(var(--muted-foreground))] font-semibold'>
-                                                            ✓ Returned
-                                                        </span>
-                                                    )}
+
+                                                    {/* action button */}
+                                                    <div className='shrink-0'>
+                                                        {item.status === 'waiting' && (
+                                                            <Button
+                                                                size='sm'
+                                                                onClick={() => handleStarItem(reservation._id, item._id)}>
+                                                                <Play size={14} />
+                                                                Start
+                                                            </Button>
+                                                        )}
+                                                        {(item.status === 'active' || item.status === 'overdue') && (
+                                                            <Button
+                                                                size='sm'
+                                                                variant={item.status === 'overdue' ? 'danger' : 'secondary'}
+                                                                onClick={() => handleCompleteItem(reservation._id, item._id)}>
+                                                                <CheckCircle size={14} />
+                                                                Return
+                                                            </Button>
+                                                        )}
+                                                        {item.status === 'completed' && (
+                                                            <span className='text-xs text-[hsl(var(--muted-foreground))] font-semibold'>
+                                                                ✓ Returned
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         );

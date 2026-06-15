@@ -1,5 +1,6 @@
 import { QUERY_KEYS } from "@/constant/queryKeyS";
 import { api } from "@/lib/axios";
+import { AdminAnalytics } from "@/types/analytics.types";
 import { useQuery } from "@tanstack/react-query";
 
 export interface AdminStats {
@@ -40,4 +41,19 @@ export const useUsers = (filters?: Record<string, unknown>) =>
     },
   });
 
+// analytics here
 
+export const useAdminAnalytics = (rangeDays: 7 | 30 = 30) => {
+ return useQuery({
+    queryKey: ["admin", "analytics", rangeDays],
+    queryFn: async () => {
+      const { data } = await api.get<{
+        success: boolean;
+        data: AdminAnalytics;
+      }>("/admin/analytics", { params: { range: rangeDays } });
+
+      return data.data;
+    },
+    staleTime: 1000 * 60 * 2,
+  });
+};

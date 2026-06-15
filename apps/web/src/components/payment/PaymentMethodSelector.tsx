@@ -18,7 +18,7 @@ const METHODS = [
         active: 'border-blue-500 bg-blue-50',
         desc: 'GCash, Maya, BPI + 30 banks',
         available: true,
-        badge: 'Test only',
+        badge: null,
     },
     {
         id: 'gcash' as PaymentMethod,
@@ -28,7 +28,7 @@ const METHODS = [
         active: 'border-blue-500 bg-blue-50',
         desc: 'Pay via Gcash app',
         available: true,
-        badge: 'Test only',
+        badge: null,
     },
     {
         id: 'paymaya' as PaymentMethod,
@@ -38,7 +38,7 @@ const METHODS = [
         active: 'border-green-500 bg-green-50',
         desc: 'Pay via Maya app',
         available: true,
-        badge: 'Test only'
+        badge: null,
     },
     {
         id: 'card' as PaymentMethod,
@@ -48,7 +48,7 @@ const METHODS = [
         active: 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.05)]',
         desc: 'Visa / Mastercard',
         available: true,
-        badge: 'Test only'
+        badge: null,
     },
 ];
 

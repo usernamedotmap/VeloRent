@@ -1,6 +1,6 @@
 import { attachPaymentMethod, createEWalletSource, createMayaPaymentMethod, createPaymentMethod, createQRPhPaymentMethod, getIntentId, retrievePaymentIntent } from "@/lib/paymongo";
 import { useAuthStore } from "@/stores/auth.store";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import PaymentMethodSelector, { PaymentMethod } from "./PaymentMethodSelector";
 import CardForm, { CardData } from "./CardForm";
 import { formatPeso } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { X } from "lucide-react";
 import { Button } from "../ui/button";
 import PaymentStatus from "./PaymentStatus";
 import ThreeDSModal from "./ThreeDSModal";
+import { api } from "@/lib/axios";
 
 
 type ModalStep =
@@ -44,6 +45,49 @@ export default function PaymentModal({
     const [eWalletUrl, setEWalletUrl] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+
+    const pollReservationRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const stepRef = useRef<ModalStep>(null);
+
+    useEffect(() => {
+        stepRef.current = step;
+    }, [step])
+
+    useEffect(() => {
+        if (!reservationId) return;
+
+        pollReservationRef.current = setInterval(async () => {
+            if (['success', 'failed', 'cancelled', 'processing'].includes(step)) {
+                clearInterval(pollReservationRef.current!);
+                return;
+            }
+
+            try {
+                const { data } = await api.get(`/reservation/${reservationId}`);
+                const status = data.data?.status;
+
+                if (status === 'cancelled') {
+                    clearInterval(pollReservationRef.current!);
+                    setStep('failed');
+                    setErrorMsg('Your reservation has expired due to inactivity. Please book again.');
+                }
+
+                if (status === 'confirmed') {
+                    clearInterval(pollReservationRef.current!);
+                    setStep('success');
+                    onSuccess();
+                }
+            }  catch {
+
+            }
+        }, 30000);
+
+        return () => {
+            if (pollReservationRef.current) {
+                clearInterval(pollReservationRef.current);
+            }
+        }
+    }, [reservationId]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const billing = {
         name: user ? `${user.firstName} ${user.lastName}` : 'Customer',

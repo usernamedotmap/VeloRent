@@ -141,7 +141,7 @@ export default function AdminReservationDetailPage() {
     }
 
     return (
-        <div className="space-y-6 max-w-3xl mx-auto my-5">
+        <div className="space-y-6 mx-auto my-5 px-4 sm:px-6 lg:px-8 sm:max-w-3xl">
 
             {paymentResult === 'success' && (
                 <div className="bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -154,7 +154,7 @@ export default function AdminReservationDetailPage() {
             )}
 
             {paymentResult === 'failed' && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-2xl  flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
                     <span className="text-2xl">❌</span>
                     <div>
                         <p className="font-bold">Payment failed</p>

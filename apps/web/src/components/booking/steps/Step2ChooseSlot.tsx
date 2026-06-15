@@ -37,7 +37,7 @@ export default function Step2ChooseSlot() {
           </h3>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {SLOT_OPTIONS.map(({ hours, label, desc }) => {
             const cost      = selectedBikes.length * hours * 15000;
             const isActive  = slotHours === hours;
@@ -145,11 +145,11 @@ export default function Step2ChooseSlot() {
       )}
 
       {/* Navigation */}
-      <div className="flex justify-between pt-4 border-t border-[hsl(var(--border))]">
-        <Button variant="outline" onClick={() => setStep(1)}>
+      <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-[hsl(var(--border))]">k
+        <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep(1)}>
           ← Back
         </Button>
-        <Button onClick={() => setStep(3)} disabled={!canProceed} size="lg">
+        <Button className="w-full sm:w-auto" onClick={() => setStep(3)} disabled={!canProceed} size="lg">
           Next — Review →
         </Button>
       </div>

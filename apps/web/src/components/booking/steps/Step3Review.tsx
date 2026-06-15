@@ -187,11 +187,12 @@ const Step3Review = () => {
             </div>
 
             {/* navigation na dito */}
-            <div className='flex justify-between pt-4 border-[hsl(var(--border))]'>
-                <Button variant='outline' onClick={() => setStep(2)} disabled={isPending || isReservationCreated}>
+            <div className='flex flex-col sm:flex-row justify-between gap-3 pt-4 border-[hsl(var(--border))]'>
+                <Button className="w-full sm:w-auto" variant='outline' onClick={() => setStep(2)} disabled={isPending || isReservationCreated}>
                     ← Back
                 </Button>
                 <Button
+                    className="w-full sm:w-auto"
                     onClick={handleConfirm}
                     loading={isPending}
                     disabled={isReservationCreated}

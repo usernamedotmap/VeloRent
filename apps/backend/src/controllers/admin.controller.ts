@@ -1,5 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler";
 import * as AdminService from "../services/admin.service";
+import * as AnalyticsService from '../services/analytics.service';
 import { HttpStatus } from "../utils/httpStatus";
 
 export const getStatsController = asyncHandler(async (req, res) => {
@@ -34,3 +35,14 @@ export const getPaymentsController = asyncHandler(async (req, res) => {
     meta: pagination,
   });
 });
+
+export const getAnalyticsController = asyncHandler(async (req, res) => {
+  const rangeDays = Number(req.query.range) || 30;
+
+  const analytics = await AnalyticsService.getAdminAnalytics(rangeDays);
+
+  res.status(HttpStatus.OK).json({
+    success: true,
+    data: analytics,
+  })
+})

@@ -44,7 +44,7 @@ const WalkInPage = () => {
                 notes: notes || undefined,
             },
             {
-                onSuccess: (reservation) => navigate(ROUTES.RESERVATION(reservation._id)),
+                onSuccess: (reservation) => navigate(ROUTES.OPERATOR_RIDES),
                 onError: (err: any) => setApiError(
                     err?.response?.data?.error?.message ?? 'Failed to create walk-in'
                 ),

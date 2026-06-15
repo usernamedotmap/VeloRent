@@ -36,6 +36,9 @@ export default function CustomerDashboard() {
   const completedCount = reservations.filter((r) => r.status === 'completed').length;
   const totalSpent = reservations.filter((r) => r.status === 'completed').reduce((sum, r) => sum + r.totalCost, 0);
 
+  console.log(totalSpent, 'total spent');
+  console.log(reservations, 'reservations');
+
   return (
     <div className="space-y-8">
 
