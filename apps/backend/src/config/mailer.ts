@@ -24,6 +24,11 @@ export const sendEmail = async (params: {
     html: string;
     text?: string;
 }): Promise<void> => {
+    if (ENV.IS_PROD) {
+        console.log(`[MAILER] Email sending skipped in production for ${params.to}`);
+        return;
+    }
+
     const { to, subject, html, text } = params;
 
     try {
@@ -41,5 +46,4 @@ export const sendEmail = async (params: {
         throw err;
     }
 };
-
 
