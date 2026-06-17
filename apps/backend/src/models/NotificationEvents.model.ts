@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { Document } from "mongoose";
 
 export type DashboardNotificationEvent =
   | "new_reservation"
