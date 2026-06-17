@@ -5,6 +5,7 @@ export interface User {
     firstName: string;
     lastName: string;
     email: string;
+    rfidUid: string;
     phone: string;
     role: UserRole;
     isVerified: boolean;

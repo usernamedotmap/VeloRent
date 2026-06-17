@@ -8,6 +8,7 @@ export interface IUser extends Document {
   email: string;
   phone: string;
   passwordHash: string;
+  rfid: string;
   role: UserRole;
   avatarUrl?: string;
   isVerified: boolean;
@@ -49,6 +50,11 @@ const UserSchema = new Schema<IUser>(
       type: String,
       required: true,
       select: false,
+    },
+    rfid: {
+      type: String,
+      unique: true,
+      sparse: true
     },
     role: {
       type: String,

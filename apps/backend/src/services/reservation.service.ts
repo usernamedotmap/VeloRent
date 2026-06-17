@@ -568,7 +568,7 @@ export const completeReservationItem = async (
       (sum, i) =>
         sum + (String(i._id) === itemId ? item.overdueCost : i.overdueCost),
       0,
-    );j
+    );
 
     reservation.totalCost = reservation.baseCost + totalOverdue;
    

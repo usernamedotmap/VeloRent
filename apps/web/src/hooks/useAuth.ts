@@ -21,7 +21,7 @@ export const useMe = () => {
     queryKey: QUERY_KEYS.ME,
     queryFn: async () => {
       const { data } = await api.get<{ success: boolean; data: User }>(
-        "/auth/me", 
+        "/auth/me",
       );
       setUser(data.data);
       return data.data;
@@ -73,7 +73,10 @@ export const useRegister = () => {
 
   return useMutation({
     mutationFn: async (input: RegisterInput) => {
-      const { data } = await api.post<{ success: boolean; data: User }>("/auth/register", input);
+      const { data } = await api.post<{ success: boolean; data: User }>(
+        "/auth/register",
+        input,
+      );
       return data.data;
     },
     onSuccess: () => navigate(ROUTES.REGISTER),
@@ -100,6 +103,20 @@ export const useLogout = () => {
       logout();
       queryClient.clear();
       navigate(ROUTES.LOGIN);
+    },
+  });
+};
+
+// REIGSER RFID
+export const useRegisterRfid = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ rfidUid }: { rfidUid: string }) => {
+      const { data } = await api.patch("/user/rfid", { rfidUid });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 };

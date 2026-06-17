@@ -25,6 +25,7 @@ import { initSocket } from "./config/socket";
 import notificationRoutes from "./routes/notificationEvent.route";
 import { verifyMailer } from "./config/mailer";
 import { getMqttClient } from "./config/mqtt";
+import userRoutes from "./routes/user.route";
 
 const app = express();
 const PATH = ENV.BASE_PATH;
@@ -74,6 +75,8 @@ app.use(globalLimiter);
 //csrf protection
 // app.use(crsfProtection);
 
+// user
+app.use(`${PATH}/user`, userRoutes);
 // auth
 app.use(`${PATH}/auth`, authRoutes);
 // admin
