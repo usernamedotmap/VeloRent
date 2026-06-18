@@ -10,6 +10,10 @@ export const transporter = nodemailer.createTransport({
 });
 
 export const verifyMailer = async (): Promise<void> => {
+  if (ENV.IS_PROD) { 
+    console.log("Nodemailer verification skipped because IS_PROD is true");
+    return;
+  }
   try {
     await transporter.verify();
     console.log("Nodemailer connected to gmail");
