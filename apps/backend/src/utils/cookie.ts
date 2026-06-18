@@ -1,37 +1,47 @@
-import { Response } from "express";
+import { CookieOptions, Response } from "express";
 import { ENV } from "../config/env";
 
-const BASE_OPTIONS = {
-  httpOnly: false,
-  secure: ENV.IS_PROD,
-  sameSite: "lax" as const,
+// const BASE_OPTIONS = {
+//   httpOnly: false,
+//   secure: ENV.IS_PROD,
+//   sameSite: ENV.IS_PROD ? "none" : "lax" ,
+//   path: "/",
+// };
+
+export const getCookieOptions = (): CookieOptions => ({
+  httpOnly: true,
+  secure: true,
+  sameSite: "none" as const ,
   path: "/",
-};
+  partitioned: true,
+});
 
 export const setAuthCookies = (
   res: Response,
   accessToken: string,
   refreshToken: string,
 ): void => {
+  const options = getCookieOptions();
   const accessSeconds = Number(ENV.JWT_ACCESS_EXPIRES);
   const refreshSeconds = Number(ENV.JWT_REFRESH_EXPIRES);
 
   res.cookie("accessToken", accessToken, {
-    ...BASE_OPTIONS,
+    ...options,
     maxAge: accessSeconds * 1000,
   });
 
   res.cookie("refreshToken", refreshToken, {
-    ...BASE_OPTIONS,
+    ...options,
     maxAge: refreshSeconds * 1000,
   });
 };
 
 export const clearAuthCookies = (res: Response): void => {
+  const options = getCookieOptions();
   res.clearCookie("accessToken", {
-    ...BASE_OPTIONS,
+    ...options,
   });
   res.clearCookie("refreshToken", {
-    ...BASE_OPTIONS,
+    ...options,
   });
 };
