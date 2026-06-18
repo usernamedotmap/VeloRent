@@ -4,28 +4,24 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import { ENV } from "./config/env";
-import { errorHandler } from "./middleware/errorHandler";
-import { connectDB } from "./config/db";
-import authRoutes from "./routes/auth.route";
-import {
-  crsfProtection,
-  helmetConfig,
-  hppProtection,
-  requestSizeLimiter,
-} from "./middleware/security";
+import { helmetConfig, hppProtection, requestSizeLimiter } from "./middleware/security";
+import { webhookHandler } from "./controllers/payment.controller";
 import cookieParser from "cookie-parser";
 import { globalLimiter } from "./middleware/rateLimiter";
+import userRoutes from "./routes/user.route";
+import authRoutes from "./routes/auth.route";
+import adminRoutes from "./routes/admin.route";
 import bikeRoutes from "./routes/bike.route";
 import reservationRoutes from "./routes/reservation.route";
 import paymentRoutes from "./routes/payment.route";
-import { webhookHandler } from "./controllers/payment.controller";
-import { initCronJobs } from "./services/cron.service";
-import adminRoutes from "./routes/admin.route";
-import { initSocket } from "./config/socket";
 import notificationRoutes from "./routes/notificationEvent.route";
+import { errorHandler } from "./middleware/errorHandler";
+import { connectDB } from "./config/db";
 import { verifyMailer } from "./config/mailer";
 import { getMqttClient } from "./config/mqtt";
-import userRoutes from "./routes/user.route";
+import { initCronJobs } from "./services/cron.service";
+import { initSocket } from "./config/socket";
+
 
 const app = express();
 const PATH = ENV.BASE_PATH;
@@ -137,6 +133,7 @@ const start = async () => {
   httpServer.listen(ENV.PORT, () => {
     console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
     console.log(`📋 Health: http://localhost:${ENV.PORT}/api/health`);
+    console.log(`🟢 Running on Node.js Version: ${process.version}`);
   });
 };
 
