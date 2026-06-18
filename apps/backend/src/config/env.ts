@@ -29,7 +29,7 @@ export const ENV = {
   GMAIL_FROM_NAME: process.env.GMAIL_FROM_NAME || "VeloRent",
 
   IPROGSMS_API_KEY: required("IPROGSMS_API_KEY"),
-
+  
   MQTT_HIVE_MQ_PORT: required("MQTT_HIVE_MQ_PORT"),
   MQTT_WEBSOCKET_PORT: required("MQTT_WEBSOCKET_PORT"),
   MQTT_HOST: process.env.MQTT_HOST ?? '',

@@ -46,7 +46,7 @@ const AdminDashboard = () => {
    
 
 
-
+    console.log('stats', stats);
     return (
         <div className='p-8 space-y-8'>
 

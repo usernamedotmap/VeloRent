@@ -38,13 +38,17 @@ const getDailyTrend = async (fromDate: Date) => {
     {
       $match: {
         createdAt: { $gte: fromDate },
-        status: { $ne: "cancelled" },
+        status: { $nin: ["cancelled", "pending"] },
       },
     },
     {
       $group: {
         _id: {
-          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          $dateToString: { 
+            format: "%Y-%m-%d", 
+            date: "$createdAt",
+            timezone: "Asia/Manila" // 🔥 FIX: Shifts UTC to Manila time before converting to a string
+          },
         },
         revenue: { $sum: "$totalCost" },
         bookings: { $sum: 1 },
@@ -91,7 +95,7 @@ const getChannelBreakdown = async (fromDate: Date) => {
     {
       $match: {
         createdAt: { $gte: fromDate },
-        status: { $ne: "cancelled" },
+        status: { $nin: ["cancelled", "pending"] },
       },
     },
     {
@@ -103,6 +107,7 @@ const getChannelBreakdown = async (fromDate: Date) => {
               timezone: "Asia/Manila",
             },
           },
+          channel: "$channel",
         },
         count: { $sum: 1 },
       },
@@ -125,8 +130,10 @@ const getChannelBreakdown = async (fromDate: Date) => {
       weekMap.set(week, { week, online: 0, walkIn: 0 });
     }
     const entry = weekMap.get(week)!;
-    if (r._id.channel === "online") entry.online = r.count;
-    else entry.walkIn = r.count;
+    if (r._id.channel === "online") { entry.online = r.count } else {
+
+      entry.walkIn = r.count;
+    };
   }
 
   return Array.from(weekMap.values());
@@ -137,7 +144,8 @@ const getTopBikes = async (fromDate: Date) => {
     {
       $match: {
         createdAt: { $gte: fromDate },
-        status: { $ne: "cancelled" },
+        // FIX: Only count reservations where the bike was actually ridden
+        status: { $in: ["active", "completed", "overdue"] },
       },
     },
     { $unwind: "$items" },

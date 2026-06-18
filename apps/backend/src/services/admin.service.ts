@@ -12,30 +12,53 @@ export const getAdminStats = async () => {
     inUseBikes,
     maintenanceBikes,
     activeRides,
-    todayPayments,
-    totalRevenue,
     pendingPayments,
     totalUsers,
     todayReservations,
+    // This single aggregation replaces both separate revenue queries
+    revenueMetrics,
   ] = await Promise.all([
     Bike.countDocuments({ isActive: true }),
     Bike.countDocuments({ status: "available", isActive: true }),
     Bike.countDocuments({ status: "in_use" }),
     Bike.countDocuments({ status: "maintenance" }),
     Reservation.countDocuments({ status: { $in: ["active", "overdue"] } }),
-    Payment.aggregate([
-      { $match: { status: "paid", paidAt: { $gte: today, $lt: tomorrow } } },
-      { $group: { _id: null, total: { $sum: "$amount" } } },
-    ]),
-    Payment.aggregate([
-      { $match: { status: "paid" } },
-      { $group: { _id: null, total: { $sum: "$amount" } } },
-    ]),
     Payment.countDocuments({ status: "pending" }),
     User.countDocuments({ role: "customer" }),
     Reservation.countDocuments({
       createdAt: { $gte: today, $lt: tomorrow },
     }),
+
+    // ANALYTICS STYLE: Single pass pipeline for all revenue tracking
+    Reservation.aggregate([
+      { 
+        $match: { 
+          status: { $nin: ["cancelled", "pending"] } 
+        } 
+      },
+      {
+        $group: {
+          _id: null,
+          // Sum up everything for total revenue
+          totalRevenue: { $sum: "$totalCost" },
+          // Conditionally sum up only if it falls within today's window
+          todayRevenue: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $gte: ["$createdAt", today] },
+                    { $lt: ["$createdAt", tomorrow] }
+                  ]
+                },
+                "$totalCost",
+                0
+              ]
+            }
+          }
+        }
+      }
+    ]),
   ]);
 
   return {
@@ -44,11 +67,12 @@ export const getAdminStats = async () => {
     inUseBikes,
     maintenanceBikes,
     activeRides,
-    todayRevenue: todayPayments[0]?.total ?? 0,
-    totalRevenue: totalRevenue[0]?.total ?? 0,
     pendingPayments,
     totalUsers,
     todayReservations,
+    // Extract values safely from the single aggregate array payload
+    todayRevenue: revenueMetrics[0]?.todayRevenue ?? 0,
+    totalRevenue: revenueMetrics[0]?.totalRevenue ?? 0,
   };
 };
 

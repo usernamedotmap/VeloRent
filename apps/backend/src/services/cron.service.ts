@@ -27,7 +27,7 @@ const formatOverdueMessage = (
 ): string => {
   const cost = (overdueCost / 100).toFixed(2);
   return (
-    `Hi ${firstName}! Your VeloRent bike is ${overdueMinutes} minute(s) overdue. ` +
+    `Hi ${firstName}! Your 3Jremy bike is ${overdueMinutes} minute(s) overdue. ` +
     `Overdue charge: ₱${cost}. Please return the bike immediately. ` +
     `Additional ₱50 charged every 15 minutes.`
   );
@@ -37,7 +37,7 @@ const formatWarningMessage = (
   firstName: string,
   remainingMinutes: number,
 ): string =>
-  `Hi ${firstName}! Reminder: Your VeloRent bike slot ends in ` +
+  `Hi ${firstName}! Reminder: Your 3Jremy bike slot ends in ` +
   `${remainingMinutes} minute(s). Please start heading back. Thank you!`;
 
 // cron job 1: warning check

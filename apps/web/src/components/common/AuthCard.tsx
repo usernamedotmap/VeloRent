@@ -55,7 +55,7 @@ export default function AuthCard({ title, description, children, footer }: Props
 
                 {/* Eco tagline */}
                 <p className="text-center text-xs text-[hsl(var(--muted-foreground))] mt-6">
-                    🌿 Ride green, live clean — VeloRent
+                    🌿 Ride green, live clean — 3Jremy
                 </p>
             </div>
         </div>
