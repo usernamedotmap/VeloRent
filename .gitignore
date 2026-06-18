@@ -22,6 +22,7 @@ auth_config.json
 dist/
 build/
 out/
+seeder/
 *.tsbuildinfo
 tsconfig.tsbuildinfo
 
