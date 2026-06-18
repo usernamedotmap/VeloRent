@@ -36,14 +36,14 @@ const baseTemplate = (content: string, title: string): string => `
 <body>
   <div class="container">
     <div class="header">
-      <h1>🚲 VeloRent</h1>
+      <h1>🚲 3Jremy</h1>
       <p>Smart Bicycle Rental System</p>
     </div>
     <div class="body">
       ${content}
     </div>
     <div class="footer">
-      <p>VeloRent Bike Rental • Questions? Reply to this email.</p>
+      <p>3Jremy Bike Rental • Questions? Reply to this email.</p>
       <p>This is an automated message — please do not reply directly.</p>
     </div>
   </div>
@@ -64,7 +64,7 @@ export const bookingConfirmedEmail = (params: {
   html: baseTemplate(`
     <h2>Booking Confirmed! 🎉</h2>
     <p>Hi <strong>${params.firstName}</strong>,</p>
-    <p>Your VeloRent reservation has been confirmed. Show your reference code at the counter.</p>
+    <p>Your 3Jremy reservation has been confirmed. Show your reference code at the counter.</p>
 
     <div class="ref-box">
       <p style="margin:0 0 4px; color:#666; font-size:13px;">Reference Code</p>
@@ -95,7 +95,7 @@ export const bookingConfirmedEmail = (params: {
     <p style="margin-top:24px; color:#555; font-size:14px;">
       ⚠️ Overdue charges: ₱50 per 15 minutes past your slot per bike, settled at the counter.
     </p>
-  `, 'Booking Confirmed — VeloRent'),
+  `, 'Booking Confirmed — 3Jremy'),
 });
 
 // ─── Ride Started ─────────────────────────────────────────────
@@ -129,7 +129,7 @@ export const rideStartedEmail = (params: {
     <p style="margin-top:24px; color:#555;">
       ⏰ Please return your bike on time to avoid overdue charges.
     </p>
-  `, 'Ride Started — VeloRent'),
+  `, 'Ride Started — 3Jremy'),
 });
 
 // ─── Ride Completed ───────────────────────────────────────────
@@ -143,7 +143,7 @@ export const rideCompletedEmail = (params: {
   html: baseTemplate(`
     <h2>Ride Complete! 🏁</h2>
     <p>Hi <strong>${params.firstName}</strong>,</p>
-    <p>Thank you for riding with VeloRent. Here's your summary:</p>
+    <p>Thank you for riding with 3Jremy. Here's your summary:</p>
 
     <div class="ref-box">
       <div class="ref-code">${params.refCode}</div>
@@ -169,9 +169,9 @@ export const rideCompletedEmail = (params: {
     </table>
 
     <p style="margin-top:24px; color:#555;">
-      🚲 Thanks for choosing VeloRent. We hope to see you again!
+      🚲 Thanks for choosing 3Jremy. We hope to see you again!
     </p>
-  `, 'Ride Complete — VeloRent'),
+  `, 'Ride Complete — 3Jremy'),
 });
 
 // ─── Reservation Cancelled ────────────────────────────────────
@@ -196,5 +196,5 @@ export const cancellationEmail = (params: {
     ` : `
     <p style="color:#555;">No charges were made for this reservation.</p>
     `}
-  `, 'Reservation Cancelled — VeloRent'),
+  `, 'Reservation Cancelled — 3Jremy'),
 });

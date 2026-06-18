@@ -15,7 +15,7 @@ const Footer = () => {
                     <div>
                         <div className="flex items-center gap-2 font-bold text-lg text-[hsl(var(--primary))] font-['Plus_Jakarta_Sans'] mb-2">
                             <Bike size={20} />
-                            VeloRent
+                            3Jremy
                         </div>
                         <p className='text-sm text-[hsl(var(--muted-foreground))] max-w-xs'>
                             Eco-friendly bike rentals for a greener tomorrow. Ride clean, live green.
@@ -46,7 +46,7 @@ const Footer = () => {
                 </div>
 
                 <div className=' border-t border-[hsl(var(--border))] mt-8 pt-6 text-center text-xs text-[hsl(var(--muted-foreground))]'>
-                    © {new Date().getFullYear()} VeloRent. Ride green, live clean. 🌿
+                    © {new Date().getFullYear()} 3Jremy. Ride green, live clean. 🌿
                 </div>
             </div>
 

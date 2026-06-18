@@ -36,7 +36,7 @@ const RegisterPage = () => {
   return (
     <AuthCard
       title="Create your account"
-      description="Join VeloRent and start riding green today"
+      description="Join 3Jremy and start riding green today"
       footer={
         <span>
           Already have an account?{' '}

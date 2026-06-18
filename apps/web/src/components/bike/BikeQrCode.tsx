@@ -58,7 +58,7 @@ export default function BikeQrCode({ bikeId, serialNumber, bikeName, size = 200,
         <body>
           <div class="container">
             <h2>🚲 ${bikeName}</h2>
-            <p>VeloRent Bike Rental</p>
+            <p>3Jremy Bike Rental</p>
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(bookingUrl)}" />
             <div class="serial">#${serialNumber}</div>
             <div class="instruction">Scan to book this bike</div>

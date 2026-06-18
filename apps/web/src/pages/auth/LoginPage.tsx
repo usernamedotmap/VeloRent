@@ -44,7 +44,7 @@ const LoginPage = () => {
   return (
     <AuthCard
       title="Welcome Back"
-      description='Sign in to your VeloRent account'
+      description='Sign in to your 3Jremy account'
       footer={
         <span>Don't have an account?{' '}
           <Link

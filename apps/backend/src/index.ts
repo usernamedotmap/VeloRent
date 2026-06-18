@@ -133,7 +133,6 @@ const start = async () => {
   httpServer.listen(ENV.PORT, () => {
     console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
     console.log(`📋 Health: http://localhost:${ENV.PORT}/api/health`);
-    console.log(`🟢 Running on Node.js Version: ${process.version}`);
   });
 };
 

@@ -33,7 +33,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             <div className='flex items-center justify-between p-6 border-b border-white/10'>
                 <Link to={ROUTES.OPERATOR} onClick={onClose}>
                     <span className="font-bold text-xl text-white font-['Plus_Jakarta_Sans']">
-                        🚲 VeloRent
+                        🚲 3Jremy
                     </span>
                     <p className='text-xs text-white/60 mt-0.5'>
                         Operator Panel</p>
@@ -131,7 +131,7 @@ const OperatorLayout = () => {
                         <Menu size={22} />
                     </button>
                     <span className="text-white font-bold font-['Plus_Jakarta_Sans']">
-                        🚲 VeloRent Operator
+                        🚲 3Jremy Operator
                     </span>
                     <NotificationBell />
                 </header>

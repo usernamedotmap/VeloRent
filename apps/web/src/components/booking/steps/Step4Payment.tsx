@@ -241,7 +241,7 @@ export default function Step4Payment({ setIsIntentionallyLeaving }: { setIsInten
                     <span className="text-base shrink-0">🔒</span>
                     <p>
                         Your payment is processed securely by PayMongo.
-                        VeloRent never stores you card details.
+                        3Jremy never stores you card details.
                     </p>
                 </div>
 

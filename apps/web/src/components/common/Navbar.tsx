@@ -40,7 +40,7 @@ export default function Navbar() {
           className="flex items-center gap-2 font-bold text-xl text-[hsl(var(--primary))] font-['Plus_Jakarta_Sans'] shrink-0"
         >
           <Bike size={22} />
-          <span className="hidden sm:inline">VeloRent</span>
+          <span className="hidden sm:inline">3Jremy</span>
         </Link>
 
         {/* Desktop nav */}
@@ -132,7 +132,7 @@ export default function Navbar() {
               className="flex items-center gap-2 font-bold text-xl text-[hsl(var(--primary))] font-['Plus_Jakarta_Sans']"
             >
               <Bike size={22} />
-              VeloRent
+              3Jremy
             </Link>
             <button
               onClick={() => setMenuOpen(false)}

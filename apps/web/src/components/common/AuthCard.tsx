@@ -26,7 +26,7 @@ export default function AuthCard({ title, description, children, footer }: Props
                     to={ROUTES.HOME}
                     className="flex items-center justify-center gap-2 text-[hsl(var(--primary))] font-bold text-2xl mb-8 font-['Plus_Jakarta_Sans'] hover:opacity-80 transition-opacity">
                     <Bike size={28} />
-                    VeloRent
+                    3Jremy
                 </Link>
 
                 {/* card */}
