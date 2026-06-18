@@ -44,5 +44,7 @@ export const ENV = {
 
   FRONTEND_ORIGIN: process.env.FRONTEND_ORIGIN,
 
+  CRON_SECRET_KEY: process.env.CRON_SECRET_KEY ?? '',
+
   IS_PROD: process.env.NODE_ENV === "production",
 };
