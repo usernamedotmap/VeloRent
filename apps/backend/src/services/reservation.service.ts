@@ -6,13 +6,14 @@ import {
   CreateReservationInput,
   ReservationFilterInput,
   WalkInReservationInput,
-} from "@velorent/shared";
+} from '@velorent/shared'
 import { emitToRole } from "../config/socket";
 import {
   createDashboardNotifcation,
   dashboardToSocketEvent,
 } from "./notifcationEvent.service";
 import { publishTimerCommand } from "../config/mqtt";
+import {queueRideCompletedNotification} from '../services/notification.service'
 
 const RATE_PER_HOUR = 15000;
 const OVERDUE_RATE = 5000;
@@ -547,9 +548,12 @@ export const completeReservationItem = async (
         item.overdueCost = calculateOverdueCost(timerSession.overdueSeconds);
       }
 
-      await timerSession.save();
+      await timerSession.save().catch((err) => {
+        console.error('[COMPLETE] TimerSession save  failed:', err);
+      });
     }
   }
+
 
   // free the bike
   await Bike.findByIdAndUpdate(item.bikeId, {
@@ -575,8 +579,7 @@ export const completeReservationItem = async (
 // Queue completion notifications
     const user = await User.findById(reservation.userId);
     if (user && reservation.channel === "online") { // <--- Add channel condition here
-      const { queueRideCompletedNotification } =
-        await import("./notification.service");
+      
       await queueRideCompletedNotification(reservation, user as any);
     }
   }
