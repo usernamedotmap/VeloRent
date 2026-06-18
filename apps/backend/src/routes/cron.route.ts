@@ -8,7 +8,7 @@ import { processPendingNotifications } from "../services/notificationSender";
 import { ENV } from "../config/env";
 
 const conRoutes = Router();
-if (ENV.IS_PROD) {
+if (!ENV.IS_PROD) {
     conRoutes.get("/execute-checks", async (req: Request, res: Response) => {
         if (req.headers["x-cron-key"] !== ENV.CRON_SECRET_KEY) {
             return res.status(401).send("Unauthorized");

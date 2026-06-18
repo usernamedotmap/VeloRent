@@ -575,13 +575,6 @@ export const completeReservationItem = async (
     );
 
     reservation.totalCost = reservation.baseCost + totalOverdue;
-   
-// Queue completion notifications
-    const user = await User.findById(reservation.userId);
-    if (user && reservation.channel === "online") { // <--- Add channel condition here
-      
-      await queueRideCompletedNotification(reservation, user as any);
-    }
   }
 
   await reservation.save();
@@ -590,6 +583,20 @@ export const completeReservationItem = async (
     totalCost: reservation.totalCost,
     overdueCost: Math.max(0, reservation.totalCost - reservation.baseCost),
   });
+
+  if (reservation.status === "completed" && reservation.channel === "online") {
+    void (async () => {
+      try {
+        const user = await User.findById(reservation.userId);
+
+        if (user) {
+          await queueRideCompletedNotification(reservation, user as any);
+        }
+      } catch (err) {
+        console.error("[COMPLETE] Ride completion notification failed:", err);
+      }
+    })();
+  }
   
   return reservation;
 };

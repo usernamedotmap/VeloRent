@@ -75,7 +75,6 @@ export const AdminAnalytics = () => {
     const totalBookings = dailyTrend.reduce((sum, d) => sum + d.bookings, 0);
     const topBike = topBikes[0];
 
-    console.log("helo", slotChartData);
 
     return (
         <div className="space-y-6">
