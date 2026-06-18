@@ -145,7 +145,7 @@ export default function Step2ChooseSlot() {
       )}
 
       {/* Navigation */}
-      <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-[hsl(var(--border))]">k
+      <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-[hsl(var(--border))]">
         <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep(1)}>
           ← Back
         </Button>

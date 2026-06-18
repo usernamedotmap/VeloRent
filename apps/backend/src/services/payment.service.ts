@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import { InitializePaymentInput } from "@velorent/shared";
 import { Payment, Reservation, User } from "../models";
 import { Errors } from "../utils/appError";
 import { paymongoClient } from "../config/paymongo";
