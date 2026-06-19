@@ -15,6 +15,7 @@ import bikeRoutes from "./routes/bike.route";
 import reservationRoutes from "./routes/reservation.route";
 import paymentRoutes from "./routes/payment.route";
 import notificationRoutes from "./routes/notificationEvent.route";
+import cronRoutes from "./routes/cron.route";
 import { errorHandler } from "./middleware/errorHandler";
 import { connectDB } from "./config/db";
 import { verifyMailer } from "./config/mailer";
@@ -85,6 +86,8 @@ app.use(`${PATH}/reservation`, reservationRoutes);
 app.use(`${PATH}/payment`, paymentRoutes);
 // notification
 app.use(`${PATH}/notifications`, notificationRoutes);
+// cron
+app.use(`${PATH}/cron`, cronRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({
