@@ -22,7 +22,7 @@ export const queueBookingConfirmedNotification = async (
   const cost = (reservation.totalCost / 100).toFixed(0);
   const bikes = reservation.items.length;
 
-  const smsMessage = `Ref: ${refCode} | Date: ${date}`;
+  const smsMessage = `Hi ${user.firstName}! 3Jremy booking confirmed.Ref: ${refCode} | Date: ${date}`;
   // `Hi ${user.firstName}! 3Jremy booking confirmed. ` +
   // `${bikes} bike${bikes > 1 ? "s" : ""} | ${reservation.slotHours}hr | ` +
   // `${date} | P${cost}. Show this at counter. Enjoy!`;
@@ -76,7 +76,7 @@ export const queueRideCompletedNotification = async (
 
   const cost = (reservation.totalCost / 100).toFixed(2);
 
-  const smsMessage = `Hi ${user.firstName}! 3Jremy ride complete. Total: P${cost}` ;
+  const smsMessage = `Hi ${user.firstName}! 3Jremy ride complete. Total: P${cost}` +  `P${(overdueCost / 100).toFixed(2)} overdue charge — settle at counter).` ;
   // `Total: P${cost}` +
   // (overdueCost > 0
   //   ? ` (incl. P${(overdueCost / 100).toFixed(2)} overdue charge — settle at counter).`

@@ -25,7 +25,6 @@ const TimerSessionSchema = new Schema<ITimerSession>(
       type: Schema.Types.ObjectId,
       ref: "Reservation",
       required: true,
-      unique: true,
     },
     reservationItemId: {
       type: Schema.Types.ObjectId,
@@ -86,13 +85,8 @@ const TimerSessionSchema = new Schema<ITimerSession>(
   { timestamps: true },
 );
 
-TimerSessionSchema.index(
-  { reservationId: 1, reservationItemId: 1 },
-  { unique: true },
-);
+// ✅ SAFE UNIQUE CONSTRAINT: Ensures a single rental item can't have duplicate concurrent tracking sessions
+TimerSessionSchema.index({ reservationItemId: 1 }, { unique: true });
 TimerSessionSchema.index({ isActive: 1, isOverdue: 1 });
 
-export const TimerSession = mongoose.model<ITimerSession>(
-  "TimerSession",
-  TimerSessionSchema,
-);
+export const TimerSession = mongoose.model<ITimerSession>("TimerSession", TimerSessionSchema);

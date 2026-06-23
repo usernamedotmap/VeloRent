@@ -154,3 +154,13 @@ const extractTokenFromCookie = (
   const value = match.split('=').slice(1).join('=');
   return decodeURIComponent(value);
 };
+
+export const emitToSocket = (
+  socketId: string,
+  event:    string,
+  data:     Record<string, unknown>
+) => {
+  if (!io) return;
+  io.to(socketId).emit(event, data);
+  console.log(`[SOCKET] Emitted ${event} to socket ${socketId}`);
+};

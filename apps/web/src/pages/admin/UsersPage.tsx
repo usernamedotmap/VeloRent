@@ -1,9 +1,11 @@
+import RFIDRegisterButton from "@/components/admin/RFIDRegistrationButton";
 import PageHeader from "@/components/common/PageHeader";
 import ResponsiveTable from "@/components/common/ResponsiveTable";
 import { Badge } from "@/components/ui/badge";
 import { useUsers } from "@/hooks/useAdmin";
 import { getInitials } from "@/lib/utils";
 import { User } from "@/types/user.types";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 const badgeStyles: Record<string, string> = {
@@ -20,6 +22,7 @@ const AdminUsersPage = () => {
 
     const users = data?.data ?? [];
     const pagination = data?.meta;
+    const queryClient = useQueryClient();
 
     return (
         <div className="p-8 space-y-6">
@@ -88,6 +91,22 @@ const AdminUsersPage = () => {
                                     {user.isVerified ? 'Verified' : 'Pending'}
                                 </Badge>
                             )
+                        },
+                        {
+                            key: 'rfid',
+                            label: 'RFID Card',
+                            render: (user: User) => (
+                                <RFIDRegisterButton
+                                userId={user._id || user.id}
+                                userName={`${user.firstName} ${user.lastName}`}
+                                currentUid={user.rfid}
+                                deviceId="arduino-001"
+                                onSuccess={() => {
+                                    queryClient.invalidateQueries({ queryKey: ['admin','users']});
+                                }}
+                                />
+                            )
+
                         }
                     ]}
                 />

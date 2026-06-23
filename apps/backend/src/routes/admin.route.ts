@@ -6,6 +6,7 @@ import {
   getPaymentsController,
   getStatsController,
   getUsersController,
+  triggerRfidRegistrationController,
 } from "../controllers/admin.controller";
 
 const adminRoutes = Router();
@@ -26,5 +27,11 @@ adminRoutes.get(
   authenticate,
   authorize("admin"),
   getAnalyticsController,
+);
+
+adminRoutes.post('/rfid/register',
+  authenticate,
+  authorize('admin', 'operator'),
+  triggerRfidRegistrationController
 );
 export default adminRoutes;
