@@ -66,7 +66,7 @@ const handleRfidScan = async (deviceId: string, uid: string) => {
   const resultTopic = `velorent/device/${deviceId}/rfid/result`;
   const mqttClient  = getMqttClient();
   const publish     = (result: object) =>
-    mqttClient.publish(resultTopic, JSON.stringify(result), { qos: 1 });
+    mqttClient.publish(resultTopic, JSON.stringify(result), { qos: 0 });
 
   const normalizedUid = uid.trim().toUpperCase();
   console.log(`[RFID] Ride scan: "${normalizedUid}"`);
@@ -74,7 +74,7 @@ const handleRfidScan = async (deviceId: string, uid: string) => {
   const user = await User.findOne({ rfid: normalizedUid });
   if (!user) {
     console.log(`[RFID] Unknown card: ${normalizedUid}`);
-    publish({ result: 'not_found', message: 'Card not registered' });
+    publish({ result: 'not_found', message: 'Card not registered' , ts: new Date().toISOString() });
     return;
   }
 
@@ -129,7 +129,7 @@ const handleRegistration = async (deviceId: string, uid: string) => {
   const mqttClient  = getMqttClient();
   const resultTopic = `velorent/device/${deviceId}/rfid/result`;
   const publish     = (payload: object) =>
-    mqttClient.publish(resultTopic, JSON.stringify(payload), { qos: 1 });
+    mqttClient.publish(resultTopic, JSON.stringify(payload), { qos: 0 });
 
   const normalizedUid = uid.trim().toUpperCase();
   console.log(`[RFID-REG] uid received: "${normalizedUid}"`);
