@@ -74,10 +74,10 @@ const ProfilePage = () => {
             </Card> 
 
           
-            <RFIDCardSection currentUid={user?.rfidUid}  />
+            {/* <RFIDCardSection currentUid={user?.rfidUid}  />
             <p className='text-xs text-center text-[hsl(var(--muted-foreground))]'>
                 To update your profile details, please contact the park administrator.
-            </p>
+            </p> */}
         </div>
     );
 }

@@ -13,7 +13,7 @@ import {
   dashboardToSocketEvent,
 } from "./notifcationEvent.service";
 import { publishTimerCommand } from "../config/mqtt";
-import {queueRideCompletedNotification} from '../services/notification.service'
+import { queueRideCompletedNotification } from '../services/notification.service'
 
 const RATE_PER_HOUR = 15000;
 const OVERDUE_RATE = 5000;
@@ -238,7 +238,7 @@ export const createWalkInReservation = async (
       notes,
     });
 
-        const emits = await createDashboardNotifcation({
+    const emits = await createDashboardNotifcation({
       recipientRole: "both",
       event: "new_reservation",
       title: "🚲 New Walk-In Reservation",
@@ -407,9 +407,9 @@ export const cancelReservation = async (
   if (!cancellabeStatuses.includes(reservation.status)) {
     throw Errors.badRequest(
       `Cannot cancel a reservation with status "${reservation.status}".` +
-        (role === "customer" && reservation.status === "confirmed"
-          ? " Your payment has already been confirmed. Please contact support for a refund."
-          : ""),
+      (role === "customer" && reservation.status === "confirmed"
+        ? " Your payment has already been confirmed. Please contact support for a refund."
+        : ""),
     );
   }
 
@@ -466,7 +466,15 @@ export const startReservationItem = async (
     );
   }
 
-  const locked = await Bike.findByIdAndUpdate(
+  const preExistingSession = await TimerSession.findOne({
+    reservationItemId: item._id,
+  });
+  if (preExistingSession) {
+    console.log(`⚠️ Timer session already active for item ${itemId}. Returning current state.`);
+    return reservation;
+  }
+
+  const locked = await Bike.findOneAndUpdate(
     { _id: item.bikeId, status: "reserved" },
     { $set: { status: "in_use" } },
     { new: true },
@@ -476,17 +484,31 @@ export const startReservationItem = async (
 
   // create timer session
   const slotSeconds = reservation.slotHours * 3600;
-  const timerSession = await TimerSession.create({
-    reservationId: reservation._id,
-    reservationItemId: item._id,
-    userId: reservation.userId,
-    bikeId: item.bikeId,
-    slotSeconds,
-    startedAt: new Date(),
-    isActive: true,
-    isOverdue: false,
-    overdueSeconds: 0,
-  });
+  let timerSession;
+
+  try {
+    timerSession = await TimerSession.create({
+      reservationId: reservation._id,
+      reservationItemId: item._id,
+      userId: reservation.userId,
+      bikeId: item.bikeId,
+      slotSeconds,
+      startedAt: new Date(),
+      isActive: true,
+      isOverdue: false,
+      overdueSeconds: 0,
+    });
+  } catch (err: any) {
+    if (err.code === 11000) {
+      console.warn("🎯 Race condition intercepted! Duplicate transaction blocked cleanly.");
+
+      // Rollback the bike's lock state since this duplicate path is discarding execution
+      await Bike.updateOne({ _id: item.bikeId }, { $set: { status: "reserved" } });
+      return reservation;
+    }
+    throw err;
+  }
+
 
   item.status = "active";
   item.actualStart = new Date();
@@ -597,6 +619,6 @@ export const completeReservationItem = async (
       }
     })();
   }
-  
+
   return reservation;
 };
