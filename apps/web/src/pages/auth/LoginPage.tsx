@@ -97,7 +97,7 @@ const LoginPage = () => {
         </div>
 
         {/* remember me + forgor password */}
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <label className='flex items-center gap-2 cursor-pointer select-none'>
             <input
               type='checkbox'
@@ -105,7 +105,7 @@ const LoginPage = () => {
               onChange={(e) => setRememberMe(e.target.checked)}
               className="w-4 h-4 rounded border-[hsl(var(--border))] accent-[hsl(var(--primary))]"
             />
-            {/* <span className="text-sm text-[hsl(var(--muted-foreground))]">
+            <span className="text-sm text-[hsl(var(--muted-foreground))]">
               Remember me
             </span>
           </label>
@@ -113,8 +113,8 @@ const LoginPage = () => {
             to='/forgot/password'
             className="text-sm text-[hsl(var(--primary))] hover:underline font-medium">
             Forgot Password
-          </Link> */}
-        </div>
+          </Link>
+        </div> */}
 
         <Button
           type='submit'
